@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Benday.EfCore.SqlServer.SqlServer
+namespace Benday.EfCore.SqlServer
 {
     public abstract class SqlEntityFrameworkRepositoryBase<TEntity, TDbContext> :
         IDisposable where TEntity : class, IInt32Identity

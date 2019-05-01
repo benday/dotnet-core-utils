@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Benday.EfCore.SqlServer.SqlServer
+namespace Benday.EfCore.SqlServer
 {
     public abstract class SqlEntityFrameworkCrudRepositoryBase<TEntity, TDbContext> :
         SqlEntityFrameworkRepositoryBase<TEntity, TDbContext>, IRepository<TEntity>
