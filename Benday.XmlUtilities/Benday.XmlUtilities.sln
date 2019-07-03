@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benday.XmlUtilities", "Benday.XmlUtilities\Benday.XmlUtilities.csproj", "{493ECDE4-27D0-4321-B3E3-F8818E763B6A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Debug|x64.Build.0 = Debug|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Debug|x86.Build.0 = Debug|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Release|x64.ActiveCfg = Release|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Release|x64.Build.0 = Release|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Release|x86.ActiveCfg = Release|Any CPU
+		{493ECDE4-27D0-4321-B3E3-F8818E763B6A}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E3D8BCCD-C537-4A24-8831-BE61658B8DEB}
+	EndGlobalSection
+EndGlobal
