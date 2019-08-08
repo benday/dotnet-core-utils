@@ -36,7 +36,21 @@ namespace Benday.EfCore.SqlServer
 
             EntityDbSet.Remove(deleteThis);
 
+            BeforeDelete(deleteThis);
+
             Context.SaveChanges();
+
+            AfterDelete(deleteThis);
+        }
+
+        protected virtual void BeforeDelete(TEntity deleteThis)
+        {
+            
+        }
+
+        protected virtual void AfterDelete(TEntity deleteThis)
+        {
+
         }
 
         protected virtual List<string> Includes
@@ -94,7 +108,21 @@ namespace Benday.EfCore.SqlServer
             VerifyItemIsAddedOrAttachedToDbSet(
                 EntityDbSet, saveThis);
 
+            BeforeSave(saveThis);
+
             Context.SaveChanges();
+
+            AfterSave(saveThis);
+        }
+
+        protected virtual void BeforeSave(TEntity saveThis)
+        {
+
+        }
+
+        protected virtual void AfterSave(TEntity saveThis)
+        {
+
         }
     }
 }
