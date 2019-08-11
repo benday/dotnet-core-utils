@@ -67,6 +67,15 @@ namespace Benday.EfCore.SqlServer
             return queryable.ToList();
         }
 
+        public virtual IList<TEntity> GetAll(int maxNumberOfRows)
+        {
+            var queryable = EntityDbSet.AsQueryable();
+
+            queryable = AddIncludes(queryable);
+
+            return queryable.Take(maxNumberOfRows).ToList();
+        }        
+
         protected virtual IQueryable<TEntity> AddIncludes(IQueryable<TEntity> queryable)
         {
             if (queryable == null)
