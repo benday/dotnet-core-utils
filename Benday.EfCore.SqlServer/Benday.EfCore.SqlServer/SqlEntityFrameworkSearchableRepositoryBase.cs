@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace Benday.EfCore.SqlServer
 {
-    public abstract class SqlEntityFrameworkSearchRepositoryBase<TEntity, TDbContext> :
-        SqlEntityFrameworkCrudRepositoryBase<TEntity, TDbContext>, IRepository<TEntity>
+    public abstract class SqlEntityFrameworkSearchableRepositoryBase<TEntity, TDbContext> :
+        SqlEntityFrameworkCrudRepositoryBase<TEntity, TDbContext>, ISearchableRepository<TEntity>
         where TEntity : class, IInt32Identity
         where TDbContext : DbContext
     {
-        public SqlEntityFrameworkSearchRepositoryBase(
+        public SqlEntityFrameworkSearchableRepositoryBase(
             TDbContext context) : base(context)
         {
 
