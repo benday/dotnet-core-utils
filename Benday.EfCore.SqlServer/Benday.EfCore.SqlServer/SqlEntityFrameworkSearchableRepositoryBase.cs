@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Benday.Common;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,7 +16,7 @@ namespace Benday.EfCore.SqlServer
 
         }
 
-        public virtual IList<TEntity> Search(EntitySearch search)
+        public virtual IList<TEntity> Search(Search search)
         {
             if (search == null || search.Arguments.Count == 0)
             {
@@ -53,28 +54,28 @@ namespace Benday.EfCore.SqlServer
                     }
                 }
 
-                if (search.MaxNumberOfRows == -1)
+                if (search.MaxNumberOfResults == -1)
                 {
                     return query.ToList();
                 }
                 else
                 {
-                    return query.Take(search.MaxNumberOfRows).ToList();
+                    return query.Take(search.MaxNumberOfResults).ToList();
                 }
             }
         }
 
         protected abstract IQueryable<TEntity> AddWhereClauseForDoesNotContain(
-            IQueryable<TEntity> query, EntitySearchArgument arg);
+            IQueryable<TEntity> query, SearchArgument arg);
         protected abstract IQueryable<TEntity> AddWhereClauseForIsNotEqualTo(
-            IQueryable<TEntity> query, EntitySearchArgument arg);
+            IQueryable<TEntity> query, SearchArgument arg);
         protected abstract IQueryable<TEntity> AddWhereClauseForExact(
-            IQueryable<TEntity> query, EntitySearchArgument arg);
+            IQueryable<TEntity> query, SearchArgument arg);
         protected abstract IQueryable<TEntity> AddWhereClauseForEndsWith(
-            IQueryable<TEntity> query, EntitySearchArgument arg);
+            IQueryable<TEntity> query, SearchArgument arg);
         protected abstract IQueryable<TEntity> AddWhereClauseForStartsWith(
-            IQueryable<TEntity> query, EntitySearchArgument arg);
+            IQueryable<TEntity> query, SearchArgument arg);
         protected abstract IQueryable<TEntity> AddWhereClauseForContains(
-            IQueryable<TEntity> query, EntitySearchArgument arg);
+            IQueryable<TEntity> query, SearchArgument arg);
     }
 }

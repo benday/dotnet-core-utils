@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Benday.Common;
 
 namespace Benday.EfCore.SqlServer
 {
