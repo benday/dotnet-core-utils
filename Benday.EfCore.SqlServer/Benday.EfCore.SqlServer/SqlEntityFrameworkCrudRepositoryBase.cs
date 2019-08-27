@@ -65,7 +65,14 @@ namespace Benday.EfCore.SqlServer
 
             queryable = AddIncludes(queryable);
 
+            queryable = BeforeGetAll(queryable);
+            
             return queryable.ToList();
+        }
+
+        protected virtual IQueryable<TEntity> BeforeGetAll(IQueryable<TEntity> query)
+        {
+            return query;
         }
 
         public virtual IList<TEntity> GetAll(int maxNumberOfRows)
@@ -107,7 +114,14 @@ namespace Benday.EfCore.SqlServer
 
             query = AddIncludes(query);
 
+            query = BeforeGetById(query, id);
+
             return query.FirstOrDefault();
+        }
+
+        private IQueryable<TEntity> BeforeGetById(IQueryable<TEntity> query, int id)
+        {
+            return query;
         }
 
         public virtual void Save(TEntity saveThis)

@@ -1,5 +1,6 @@
 ﻿using Benday.Common;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -54,6 +55,8 @@ namespace Benday.EfCore.SqlServer
                     }
                 }
 
+                query = BeforeSearch(query, search);
+
                 if (search.MaxNumberOfResults == -1)
                 {
                     return query.ToList();
@@ -63,6 +66,11 @@ namespace Benday.EfCore.SqlServer
                     return query.Take(search.MaxNumberOfResults).ToList();
                 }
             }
+        }
+
+        protected virtual IQueryable<TEntity> BeforeSearch(IQueryable<TEntity> query, Search search)
+        {
+            return query;
         }
 
         protected abstract IQueryable<TEntity> AddWhereClauseForDoesNotContain(
