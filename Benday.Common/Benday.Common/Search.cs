@@ -15,10 +15,11 @@ namespace Benday.Common
         public void AddArgument(
             string propertyName,
             SearchMethod method,
-            string value)
+            string value,
+            SearchOperator combineWithOtherArgumentsAs = SearchOperator.And)
         {
             Arguments.Add(
-                new SearchArgument(propertyName, method, value));
+                new SearchArgument(propertyName, method, value, combineWithOtherArgumentsAs));
         }
 
         public int MaxNumberOfResults { get; set; }
