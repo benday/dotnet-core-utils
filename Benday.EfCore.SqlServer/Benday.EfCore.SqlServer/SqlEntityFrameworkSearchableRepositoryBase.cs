@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Benday.EfCore.SqlServer
 {
@@ -25,36 +26,38 @@ namespace Benday.EfCore.SqlServer
             }
             else
             {
-                var query = EntityDbSet.AsQueryable<TEntity>();
+                Expression<Func<TEntity, bool>> predicate = c => true;
 
                 foreach (var arg in search.Arguments)
                 {
                     if (arg.Method == SearchMethod.Contains)
                     {
-                        query = AddWhereClauseForContains(query, arg);
+                        predicate = AddWhereClauseForContains(predicate, arg);
                     }
                     else if (arg.Method == SearchMethod.StartsWith)
                     {
-                        query = AddWhereClauseForStartsWith(query, arg);
+                        predicate = AddWhereClauseForStartsWith(predicate, arg);
                     }
                     else if (arg.Method == SearchMethod.EndsWith)
                     {
-                        query = AddWhereClauseForEndsWith(query, arg);
+                        predicate = AddWhereClauseForEndsWith(predicate, arg);
                     }
                     else if (arg.Method == SearchMethod.Exact)
                     {
-                        query = AddWhereClauseForExact(query, arg);
+                        predicate = AddWhereClauseForExact(predicate, arg);
                     }
                     else if (arg.Method == SearchMethod.IsNot)
                     {
-                        query = AddWhereClauseForIsNotEqualTo(query, arg);
+                        predicate = AddWhereClauseForIsNotEqualTo(predicate, arg);
                     }
                     else if (arg.Method == SearchMethod.DoesNotContain)
                     {
-                        query = AddWhereClauseForDoesNotContain(query, arg);
+                        predicate = AddWhereClauseForDoesNotContain(predicate, arg);
                     }
                 }
 
+                var query = EntityDbSet.Where(predicate);
+                
                 query = BeforeSearch(query, search);
 
                 if (search.MaxNumberOfResults == -1)
@@ -73,17 +76,17 @@ namespace Benday.EfCore.SqlServer
             return query;
         }
 
-        protected abstract IQueryable<TEntity> AddWhereClauseForDoesNotContain(
-            IQueryable<TEntity> query, SearchArgument arg);
-        protected abstract IQueryable<TEntity> AddWhereClauseForIsNotEqualTo(
-            IQueryable<TEntity> query, SearchArgument arg);
-        protected abstract IQueryable<TEntity> AddWhereClauseForExact(
-            IQueryable<TEntity> query, SearchArgument arg);
-        protected abstract IQueryable<TEntity> AddWhereClauseForEndsWith(
-            IQueryable<TEntity> query, SearchArgument arg);
-        protected abstract IQueryable<TEntity> AddWhereClauseForStartsWith(
-            IQueryable<TEntity> query, SearchArgument arg);
-        protected abstract IQueryable<TEntity> AddWhereClauseForContains(
-            IQueryable<TEntity> query, SearchArgument arg);
+        protected abstract Expression<Func<TEntity, bool>> AddWhereClauseForDoesNotContain(
+            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+        protected abstract Expression<Func<TEntity, bool>> AddWhereClauseForIsNotEqualTo(
+            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+        protected abstract Expression<Func<TEntity, bool>> AddWhereClauseForExact(
+            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+        protected abstract Expression<Func<TEntity, bool>> AddWhereClauseForEndsWith(
+            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+        protected abstract Expression<Func<TEntity, bool>> AddWhereClauseForStartsWith(
+            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+        protected abstract Expression<Func<TEntity, bool>> AddWhereClauseForContains(
+            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
     }
 }
