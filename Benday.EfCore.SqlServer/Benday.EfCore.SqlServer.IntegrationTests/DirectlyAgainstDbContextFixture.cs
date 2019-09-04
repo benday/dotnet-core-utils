@@ -58,7 +58,7 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
-        public void LinqQuery_ContainsOrQueryAgainstDbContext_ReturnsTwoMatches()
+        public void LinqQuery_ContainsOrQueryAgainstDbContext_TwoCriteria()
         {
             // arrange
             var data = CreateSamplePersonRecords();
@@ -68,9 +68,13 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             using (var context = GetDbContext())
             {
                 // act
-                var actual = context.Persons.Where(
-                    p => p.FirstName.Contains(searchString) || p.LastName.Contains(searchString)).ToList();
+                var query = context.Persons.Where(
+                    p => p.FirstName.Contains(searchString) || p.LastName.Contains(searchString));
 
+                DebugIQueryable(query);
+
+                var actual = query.ToList();
+                
                 // assert
                 Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
             }
@@ -177,9 +181,66 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             using (var context = GetDbContext())
             {
                 // act
-                var expression = GetSingleContains<Person>("LastName", "onk");
+                var expression = GetContains<Person>("LastName", "onk");
 
                 var query = context.Persons.Where(expression);
+
+                var actual = query.ToList();
+
+                // assert
+                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+            }
+        }
+
+        [TestMethod]
+        public void DynamicQuery_Contains_TwoCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 2;
+
+            using (var context = GetDbContext())
+            {
+                // act
+                var expression = GetContains<Person>("LastName", "FirstName", "onk");
+
+                var query = context.Persons.Where(expression);
+
+                var actual = query.ToList();
+
+                // assert
+                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+            }
+        }
+
+
+        [TestMethod]
+        public void DynamicQuery_Contains_TwoCriteria_AlternateVersion_EvaluatedInMemory()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 2;
+
+            using (var context = GetDbContext())
+            {
+                // act
+                /*
+                Expression<Func<Person, bool>> expr0 = p => p.FirstName.Contains("onk");
+                Expression<Func<Person, bool>> expr1 = p => p.LastName.Contains("onk");
+                */
+
+                Predicate<Person> expr0 = p => p.FirstName.Contains("onk");
+                Predicate<Person> expr1 = p => p.LastName.Contains("onk");
+
+                var orExpressions = new List<Predicate<Person>>();
+
+                orExpressions.Add(expr0);
+                orExpressions.Add(expr1);
+
+                Expression<Func<Person, bool>> exprWhere =
+                    p => orExpressions.Any(expr => expr(p));
+
+                var query = context.Persons.Where(exprWhere);
 
                 var actual = query.ToList();
 
@@ -208,7 +269,7 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             return lambda;
         }
 
-        public Expression<Func<T, bool>> GetSingleContains<T>(string propertyName, string searchValue)
+        public Expression<Func<T, bool>> GetContains<T>(string propertyName, string searchValue)
         {
             var parameterItem = Expression.Parameter(typeof(T), "item");
 
@@ -225,6 +286,43 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
                     parameterItem
                 );
 
+            return lambda;
+        }
+
+        public Expression<Func<T, bool>> GetContains<T>(string propertyName1, string propertyName2, string searchValue)
+        {
+            var parameterItem = Expression.Parameter(typeof(T), "item");
+
+            var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+
+            var left = Expression.Lambda<Func<T, bool>>(
+                Expression.Call(
+                    Expression.Property(
+                        parameterItem,
+                        propertyName1
+                    ),
+                    containsMethod,
+                    Expression.Constant(searchValue)),
+                    parameterItem
+                );
+
+            var right = Expression.Lambda<Func<T, bool>>(
+                Expression.Call(
+                    Expression.Property(
+                        parameterItem,
+                        propertyName1
+                    ),
+                    containsMethod,
+                    Expression.Constant(searchValue)),
+                    parameterItem
+                );
+
+
+            var lambda = Expression.Lambda<Func<T, bool>>(
+                Expression.OrElse(
+                    left, right),
+                    parameterItem);
+               
             return lambda;
         }
 
