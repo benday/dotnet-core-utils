@@ -57,7 +57,7 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
-        public void CreateContainsOrQueryAgainstDbContext()
+        public void LinqQuery_ContainsOrQueryAgainstDbContext_ReturnsTwoMatches()
         {
             // arrange
             var data = CreateSamplePersonRecords();
@@ -73,6 +73,57 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
                 // assert
                 Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
             }
+        }
+
+        [TestMethod]
+        public void LinqQuery_ContainsAndQueryAgainstDbContext_ReturnsOneMatches()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchStringFirstName = "all";
+            var searchStringLastName = "onk";
+            var expectedCount = 1;
+
+            using (var context = GetDbContext())
+            {
+                // act
+                var actual = context.Persons.Where(
+                    p => p.FirstName.Contains(searchStringFirstName) &&
+                    p.LastName.Contains(searchStringLastName)).ToList();
+
+                // assert
+                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+            }
+        }
+
+        [TestMethod]
+        public void CreateContainsOrQueryAgainstDbContext_WriteExpressionsToConsole()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchString = "bonk";
+            var expectedCount = 2;
+
+            using (var context = GetDbContext())
+            {
+                // act
+                var actualIQueryable = context.Persons.Where(
+                    p => p.FirstName.Contains(searchString) || p.LastName.Contains(searchString));
+
+                DebugIQueryable(actualIQueryable);
+
+                var actual = actualIQueryable.ToList();
+
+                // assert
+                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+            }
+        }
+
+        private void DebugIQueryable(IQueryable<Person> actualIQueryable)
+        {
+            var rootExpression = actualIQueryable.Expression;
+
+            Console.WriteLine("asdf");
         }
 
         private List<Person> CreateSamplePersonRecords()
