@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace Benday.EfCore.SqlServer.IntegrationTests
 {
@@ -120,10 +122,16 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             context.SaveChanges();
         }
 
+        private ILoggerFactory _LoggerFactory = new LoggerFactory(new[] {
+              new ConsoleLoggerProvider((_, __) => true, true)
+        });
+
         private TestDbContext GetDbContext()
         {
             var optionsBuilder = new DbContextOptionsBuilder();
 
+            optionsBuilder.UseLoggerFactory(_LoggerFactory);
+            optionsBuilder.EnableSensitiveDataLogging(true);
             optionsBuilder.UseSqlServer(_ConnectionString);
 
             TestDbContext context = new TestDbContext(optionsBuilder.Options);
