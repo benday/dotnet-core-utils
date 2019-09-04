@@ -203,7 +203,7 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             {
                 // act
                 var expression = GetContains<Person>("LastName", "FirstName", "onk");
-
+                
                 var query = context.Persons.Where(expression);
 
                 var actual = query.ToList();
@@ -213,6 +213,30 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             }
         }
 
+        [TestMethod]
+        public void DynamicQuery_Contains_WithChildCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 2;
+
+            using (var context = GetDbContext())
+            {
+                // act
+                var personExpressions = GetContains<Person>("LastName", "FirstName", "onk");
+
+                Expression<Func<Person, bool>> childExpression = p => p.Notes.Any(n => n.NoteText.Contains("onk"));
+
+                var queryExpression = personExpressions.Or(childExpression);                    
+
+                var query = context.Persons.Where(queryExpression);
+
+                var actual = query.ToList();
+
+                // assert
+                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+            }
+        }
 
         [TestMethod]
         public void DynamicQuery_Contains_TwoCriteria_AlternateVersion_EvaluatedInMemory()
@@ -386,6 +410,19 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
 
             temp.FirstName = firstName;
             temp.LastName = lastName;
+
+            var noteText0 = 
+                String.Format("{0} {1} note {2}", firstName, lastName, "0");
+
+            var noteText1 =
+                String.Format("{0} {1} note {2}", firstName, lastName, "1");
+
+            var noteText2 =
+                String.Format("{0} {1} note {2}", firstName, lastName, "2");
+
+            temp.Notes.Add(new PersonNote() { NoteText = noteText0 });
+            temp.Notes.Add(new PersonNote() { NoteText = noteText1 });
+            temp.Notes.Add(new PersonNote() { NoteText = noteText2 });
 
             return temp;
         }
