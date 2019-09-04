@@ -98,6 +98,29 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
+        public void LinqQuery_ContainsAndQueryAgainstDbContext_OneCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchStringLastName = "onk";
+            var expectedCount = 2;
+
+            using (var context = GetDbContext())
+            {
+                // act
+                var query = context.Persons.Where(
+                    p => p.LastName.Contains("onk"));
+                    
+                DebugIQueryable(query);
+
+                var actual = query.ToList();
+
+                // assert
+                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+            }
+        }
+
+        [TestMethod]
         public void DynamicQuery_ContainsAndQueryAgainstDbContext_ReturnsOneMatches()
         {
             // arrange
@@ -122,7 +145,7 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
-        public void DynamicQuery_Equals()
+        public void DynamicQuery_Equals_OneCriteria()
         {
             // arrange
             var data = CreateSamplePersonRecords();
@@ -144,6 +167,28 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             }
         }
 
+        [TestMethod]
+        public void DynamicQuery_Contains_OneCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 2;
+
+            using (var context = GetDbContext())
+            {
+                // act
+                var expression = GetSingleContains<Person>("LastName", "onk");
+
+                var query = context.Persons.Where(expression);
+
+                var actual = query.ToList();
+
+                // assert
+                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+            }
+        }
+
+
         public Expression<Func<T, bool>> GetSingleEquals<T>(string propertyName, string searchValue)
         {
             var parameterItem = Expression.Parameter(typeof(T), "item");
@@ -160,6 +205,26 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             );
 
             // var result = queryableData.Where(lambda);
+            return lambda;
+        }
+
+        public Expression<Func<T, bool>> GetSingleContains<T>(string propertyName, string searchValue)
+        {
+            var parameterItem = Expression.Parameter(typeof(T), "item");
+
+            var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+
+            var lambda = Expression.Lambda<Func<T, bool>>(
+                Expression.Call(
+                    Expression.Property(
+                        parameterItem,
+                        propertyName
+                    ),
+                    containsMethod,
+                    Expression.Constant(searchValue)), 
+                    parameterItem
+                );
+
             return lambda;
         }
 
