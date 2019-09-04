@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using System.Linq.Expressions;
 
 namespace Benday.EfCore.SqlServer.IntegrationTests
 {
@@ -118,6 +119,48 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
                 // assert
                 Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
             }
+        }
+
+        [TestMethod]
+        public void DynamicQuery_Equals()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchStringFirstName = "bonk";
+            var searchStringLastName = "bonk";
+            var expectedCount = 1;
+
+            using (var context = GetDbContext())
+            {
+                // act
+                var expression = GetSingleEquals<Person>("LastName", "Bonkbonk");
+
+                var query = context.Persons.Where(expression);
+
+                var actual = query.ToList();
+
+                // assert
+                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+            }
+        }
+
+        public Expression<Func<T, bool>> GetSingleEquals<T>(string propertyName, string searchValue)
+        {
+            var parameterItem = Expression.Parameter(typeof(T), "item");
+
+            var lambda = Expression.Lambda<Func<T, bool>>(
+                Expression.Equal(
+                    Expression.Property(
+                        parameterItem,
+                        propertyName
+                    ),
+                    Expression.Constant(searchValue)
+                ),
+                parameterItem
+            );
+
+            // var result = queryableData.Where(lambda);
+            return lambda;
         }
 
         [TestMethod]
