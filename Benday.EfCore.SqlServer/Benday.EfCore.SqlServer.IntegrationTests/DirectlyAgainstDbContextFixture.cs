@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using System.Linq.Expressions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Benday.EfCore.SqlServer.IntegrationTests
 {
@@ -436,15 +437,22 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             context.SaveChanges();
         }
 
-        private ILoggerFactory _LoggerFactory = new LoggerFactory(new[] {
-              new ConsoleLoggerProvider((_, __) => true, true)
-        });
+        private ILoggerFactory GetLoggerFactory()
+        {
+            IServiceCollection serviceCollection = new ServiceCollection();
+            serviceCollection.AddLogging(builder =>
+                   builder.AddConsole()
+                          .AddFilter(DbLoggerCategory.Database.Command.Name,
+                                     LogLevel.Information));
+            return serviceCollection.BuildServiceProvider()
+                    .GetService<ILoggerFactory>();
+        }
 
         private TestDbContext GetDbContext()
         {
             var optionsBuilder = new DbContextOptionsBuilder();
 
-            optionsBuilder.UseLoggerFactory(_LoggerFactory);
+            optionsBuilder.UseLoggerFactory(GetLoggerFactory());
             optionsBuilder.EnableSensitiveDataLogging(true);
             optionsBuilder.UseSqlServer(_ConnectionString);
 

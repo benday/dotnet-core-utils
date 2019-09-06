@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using System.Linq.Expressions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Benday.EfCore.SqlServer.IntegrationTests
 {
@@ -14,6 +15,26 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
     public class PersonSearchableRepositoryFixture
     {
         private readonly string _ConnectionString = "Server=localhost; Database=benday-efcore-sqlserver; User Id=sa; Password=Pa$$word;";
+
+        [TestInitialize]
+        public void OnTestInitialize()
+        {
+            _SystemUnderTest = null;
+        }
+
+        private SqlPersonRepository _SystemUnderTest;
+        public SqlPersonRepository SystemUnderTest
+        {
+            get
+            {
+                if (_SystemUnderTest == null)
+                {
+                    _SystemUnderTest = new SqlPersonRepository(GetDbContext());
+                }
+
+                return _SystemUnderTest;
+            }
+        }
 
         [TestMethod]
         public void CreateSampleData()
@@ -349,6 +370,7 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         [TestMethod]
         public void CreateContainsOrQueryAgainstDbContext_WriteExpressionsToConsole()
         {
+            Console.WriteLine("1");
             // arrange
             var data = CreateSamplePersonRecords();
             var searchString = "bonk";
@@ -436,15 +458,22 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             context.SaveChanges();
         }
 
-        private ILoggerFactory _LoggerFactory = new LoggerFactory(new[] {
-              new ConsoleLoggerProvider((_, __) => true, true)
-        });
+        private ILoggerFactory GetLoggerFactory()
+        {
+            IServiceCollection serviceCollection = new ServiceCollection();
+            serviceCollection.AddLogging(builder =>
+                   builder.AddConsole()
+                          .AddFilter(DbLoggerCategory.Database.Command.Name,
+                                     LogLevel.Information));
+            return serviceCollection.BuildServiceProvider()
+                    .GetService<ILoggerFactory>();
+        }
 
         private TestDbContext GetDbContext()
         {
             var optionsBuilder = new DbContextOptionsBuilder();
 
-            optionsBuilder.UseLoggerFactory(_LoggerFactory);
+            optionsBuilder.UseLoggerFactory(GetLoggerFactory());
             optionsBuilder.EnableSensitiveDataLogging(true);
             optionsBuilder.UseSqlServer(_ConnectionString);
 
