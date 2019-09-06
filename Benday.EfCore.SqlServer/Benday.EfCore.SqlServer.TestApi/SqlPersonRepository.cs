@@ -20,7 +20,39 @@ namespace Benday.EfCore.SqlServer.TestApi
             }
         }
 
-        protected override Expression<Func<Person, bool>> AddWhereClauseForContains(Expression<Func<Person, bool>> predicate, SearchArgument arg)
+        protected override Expression<Func<Person, bool>> GetPredicateForContains(Expression<Func<Person, bool>> predicate, SearchArgument arg)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Expression<Func<Person, bool>> GetPredicateForDoesNotContain(Expression<Func<Person, bool>> predicate, SearchArgument arg)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Expression<Func<Person, bool>> GetPredicateForEndsWith(Expression<Func<Person, bool>> predicate, SearchArgument arg)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Expression<Func<Person, bool>> GetPredicateForExact(Expression<Func<Person, bool>> predicate, SearchArgument arg)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Expression<Func<Person, bool>> GetPredicateForIsNotEqualTo(Expression<Func<Person, bool>> predicate, SearchArgument arg)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Expression<Func<Person, bool>> GetPredicateForStartsWith(Expression<Func<Person, bool>> predicate, SearchArgument arg)
+        {
+            throw new NotImplementedException();
+        }
+
+        /*
+        protected override Expression<Func<Person, bool>> AddWhereClauseForContains(
+            Expression<Func<Person, bool>> predicate, SearchArgument arg)
         {
             throw new NotImplementedException();
         }
@@ -49,5 +81,6 @@ namespace Benday.EfCore.SqlServer.TestApi
         {
             throw new NotImplementedException();
         }
+        */
     }
 }
