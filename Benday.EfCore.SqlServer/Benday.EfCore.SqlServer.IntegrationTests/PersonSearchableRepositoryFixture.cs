@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using System.Linq.Expressions;
 using Microsoft.Extensions.DependencyInjection;
+using Benday.Common;
 
 namespace Benday.EfCore.SqlServer.IntegrationTests
 {
@@ -79,26 +80,22 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
-        public void LinqQuery_ContainsOrQueryAgainstDbContext_TwoCriteria()
+        public void PersonSearchableRepository_Search_TwoCriteria()
         {
             // arrange
             var data = CreateSamplePersonRecords();
             var searchString = "bonk";
             var expectedCount = 2;
 
-            using (var context = GetDbContext())
-            {
-                // act
-                var query = context.Persons.Where(
-                    p => p.FirstName.Contains(searchString) || p.LastName.Contains(searchString));
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.Contains, searchString);
+            search.AddArgument("FirstName", SearchMethod.Contains, searchString);
 
-                DebugIQueryable(query);
+            // act
+            var actual = SystemUnderTest.Search(search);
 
-                var actual = query.ToList();
-
-                // assert
-                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
-            }
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
         }
 
         [TestMethod]

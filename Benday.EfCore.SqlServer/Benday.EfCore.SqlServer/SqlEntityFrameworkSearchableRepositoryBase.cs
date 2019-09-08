@@ -33,27 +33,27 @@ namespace Benday.EfCore.SqlServer
                 {
                     if (arg.Method == SearchMethod.Contains)
                     {
-                        predicate = GetPredicateForContains(predicate, arg);
+                        predicate = GetPredicateForContains(arg);
                     }
                     else if (arg.Method == SearchMethod.StartsWith)
                     {
-                        predicate = GetPredicateForStartsWith(predicate, arg);
+                        predicate = GetPredicateForStartsWith(arg);
                     }
                     else if (arg.Method == SearchMethod.EndsWith)
                     {
-                        predicate = GetPredicateForEndsWith(predicate, arg);
+                        predicate = GetPredicateForEndsWith(arg);
                     }
                     else if (arg.Method == SearchMethod.Exact)
                     {
-                        predicate = GetPredicateForExact(predicate, arg);
+                        predicate = GetPredicateForExact(arg);
                     }
                     else if (arg.Method == SearchMethod.IsNot)
                     {
-                        predicate = GetPredicateForIsNotEqualTo(predicate, arg);
+                        predicate = GetPredicateForIsNotEqualTo(arg);
                     }
                     else if (arg.Method == SearchMethod.DoesNotContain)
                     {
-                        predicate = GetPredicateForDoesNotContain(predicate, arg);
+                        predicate = GetPredicateForDoesNotContain(arg);
                     }
 
                     if (whereClausePredicate == null)
@@ -91,16 +91,16 @@ namespace Benday.EfCore.SqlServer
         }
 
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForDoesNotContain(
-            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+            SearchArgument arg);
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForIsNotEqualTo(
-            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+            SearchArgument arg);
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForExact(
-            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+            SearchArgument arg);
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForEndsWith(
-            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+            SearchArgument arg);
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForStartsWith(
-            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+            SearchArgument arg);
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForContains(
-            Expression<Func<TEntity, bool>> predicate, SearchArgument arg);
+            SearchArgument arg);
     }
 }
