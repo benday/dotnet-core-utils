@@ -80,12 +80,30 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
-        public void PersonSearchableRepository_Search_TwoCriteria()
+        public void PersonSearchableRepository_Search_Contains_OneCriteria()
         {
             // arrange
             var data = CreateSamplePersonRecords();
-            var searchString = "bonk";
+            var searchString = "onk";
             var expectedCount = 2;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.Contains, searchString);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+        }
+
+        [TestMethod]
+        public void PersonSearchableRepository_Search_Contains_TwoCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchString = "onk";
+            var expectedCount = 3;
 
             var search = new Search();
             search.AddArgument("LastName", SearchMethod.Contains, searchString);
@@ -99,300 +117,40 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
-        public void LinqQuery_ContainsAndQueryAgainstDbContext_ReturnsOneMatches()
+        public void PersonSearchableRepository_Search_Contains_TwoCriteria_NoResults()
         {
             // arrange
             var data = CreateSamplePersonRecords();
-            var searchStringFirstName = "all";
-            var searchStringLastName = "onk";
+            var searchString = "asdfqwer";
+            var expectedCount = 0;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.Contains, searchString);
+            search.AddArgument("FirstName", SearchMethod.Contains, searchString);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+        }
+
+        [TestMethod]
+        public void PersonSearchableRepository_Search_Contains_ChildEntitySearch()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchString = "dal";
             var expectedCount = 1;
 
-            using (var context = GetDbContext())
-            {
-                // act
-                var actual = context.Persons.Where(
-                    p => p.FirstName.Contains(searchStringFirstName) &&
-                    p.LastName.Contains(searchStringLastName)).ToList();
+            var search = new Search();
+            search.AddArgument("NoteText", SearchMethod.Contains, searchString);
 
-                // assert
-                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
-            }
-        }
+            // act
+            var actual = SystemUnderTest.Search(search);
 
-        [TestMethod]
-        public void LinqQuery_ContainsAndQueryAgainstDbContext_OneCriteria()
-        {
-            // arrange
-            var data = CreateSamplePersonRecords();
-            var searchStringLastName = "onk";
-            var expectedCount = 2;
-
-            using (var context = GetDbContext())
-            {
-                // act
-                var query = context.Persons.Where(
-                    p => p.LastName.Contains("onk"));
-
-                DebugIQueryable(query);
-
-                var actual = query.ToList();
-
-                // assert
-                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
-            }
-        }
-
-        [TestMethod]
-        public void DynamicQuery_ContainsAndQueryAgainstDbContext_ReturnsOneMatches()
-        {
-            // arrange
-            var data = CreateSamplePersonRecords();
-            var searchStringFirstName = "all";
-            var searchStringLastName = "onk";
-            var expectedCount = 1;
-
-            using (var context = GetDbContext())
-            {
-                // act
-                var query = context.Persons.AsQueryable();
-
-                query = query.Where(p => p.FirstName.Contains(searchStringFirstName));
-                query = query.Where(p => p.LastName.Contains(searchStringLastName));
-
-                var actual = query.ToList();
-
-                // assert
-                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
-            }
-        }
-
-        [TestMethod]
-        public void DynamicQuery_Equals_OneCriteria()
-        {
-            // arrange
-            var data = CreateSamplePersonRecords();
-            var searchStringFirstName = "bonk";
-            var searchStringLastName = "bonk";
-            var expectedCount = 1;
-
-            using (var context = GetDbContext())
-            {
-                // act
-                var expression = GetSingleEquals<Person>("LastName", "Bonkbonk");
-
-                var query = context.Persons.Where(expression);
-
-                var actual = query.ToList();
-
-                // assert
-                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
-            }
-        }
-
-        [TestMethod]
-        public void DynamicQuery_Contains_OneCriteria()
-        {
-            // arrange
-            var data = CreateSamplePersonRecords();
-            var expectedCount = 2;
-
-            using (var context = GetDbContext())
-            {
-                // act
-                var expression = GetContains<Person>("LastName", "onk");
-
-                var query = context.Persons.Where(expression);
-
-                var actual = query.ToList();
-
-                // assert
-                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
-            }
-        }
-
-        [TestMethod]
-        public void DynamicQuery_Contains_TwoCriteria()
-        {
-            // arrange
-            var data = CreateSamplePersonRecords();
-            var expectedCount = 2;
-
-            using (var context = GetDbContext())
-            {
-                // act
-                var expression = GetContains<Person>("LastName", "FirstName", "onk");
-
-                var query = context.Persons.Where(expression);
-
-                var actual = query.ToList();
-
-                // assert
-                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
-            }
-        }
-
-        [TestMethod]
-        public void DynamicQuery_Contains_WithChildCriteria()
-        {
-            // arrange
-            var data = CreateSamplePersonRecords();
-            var expectedCount = 2;
-
-            using (var context = GetDbContext())
-            {
-                // act
-                var personExpressions = GetContains<Person>("LastName", "FirstName", "onk");
-
-                Expression<Func<Person, bool>> childExpression = p => p.Notes.Any(n => n.NoteText.Contains("onk"));
-
-                var queryExpression = personExpressions.Or(childExpression);
-
-                var query = context.Persons.Where(queryExpression);
-
-                var actual = query.ToList();
-
-                // assert
-                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
-            }
-        }
-
-        [TestMethod]
-        public void DynamicQuery_Contains_TwoCriteria_AlternateVersion_EvaluatedInMemory()
-        {
-            // arrange
-            var data = CreateSamplePersonRecords();
-            var expectedCount = 2;
-
-            using (var context = GetDbContext())
-            {
-                // act
-                /*
-                Expression<Func<Person, bool>> expr0 = p => p.FirstName.Contains("onk");
-                Expression<Func<Person, bool>> expr1 = p => p.LastName.Contains("onk");
-                */
-
-                Predicate<Person> expr0 = p => p.FirstName.Contains("onk");
-                Predicate<Person> expr1 = p => p.LastName.Contains("onk");
-
-                var orExpressions = new List<Predicate<Person>>();
-
-                orExpressions.Add(expr0);
-                orExpressions.Add(expr1);
-
-                Expression<Func<Person, bool>> exprWhere =
-                    p => orExpressions.Any(expr => expr(p));
-
-                var query = context.Persons.Where(exprWhere);
-
-                var actual = query.ToList();
-
-                // assert
-                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
-            }
-        }
-
-
-        public Expression<Func<T, bool>> GetSingleEquals<T>(string propertyName, string searchValue)
-        {
-            var parameterItem = Expression.Parameter(typeof(T), "item");
-
-            var lambda = Expression.Lambda<Func<T, bool>>(
-                Expression.Equal(
-                    Expression.Property(
-                        parameterItem,
-                        propertyName
-                    ),
-                    Expression.Constant(searchValue)
-                ),
-                parameterItem
-            );
-
-            // var result = queryableData.Where(lambda);
-            return lambda;
-        }
-
-        public Expression<Func<T, bool>> GetContains<T>(string propertyName, string searchValue)
-        {
-            var parameterItem = Expression.Parameter(typeof(T), "item");
-
-            var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-
-            var lambda = Expression.Lambda<Func<T, bool>>(
-                Expression.Call(
-                    Expression.Property(
-                        parameterItem,
-                        propertyName
-                    ),
-                    containsMethod,
-                    Expression.Constant(searchValue)),
-                    parameterItem
-                );
-
-            return lambda;
-        }
-
-        public Expression<Func<T, bool>> GetContains<T>(string propertyName1, string propertyName2, string searchValue)
-        {
-            var parameterItem = Expression.Parameter(typeof(T), "item");
-
-            var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-
-            var left = Expression.Lambda<Func<T, bool>>(
-                Expression.Call(
-                    Expression.Property(
-                        parameterItem,
-                        propertyName1
-                    ),
-                    containsMethod,
-                    Expression.Constant(searchValue)),
-                    parameterItem
-                );
-
-            var right = Expression.Lambda<Func<T, bool>>(
-                Expression.Call(
-                    Expression.Property(
-                        parameterItem,
-                        propertyName2
-                    ),
-                    containsMethod,
-                    Expression.Constant(searchValue)),
-                    parameterItem
-                );
-
-            var lambda = left.Or<T>(right);
-
-            return lambda;
-        }
-
-        [TestMethod]
-        public void CreateContainsOrQueryAgainstDbContext_WriteExpressionsToConsole()
-        {
-            Console.WriteLine("1");
-            // arrange
-            var data = CreateSamplePersonRecords();
-            var searchString = "bonk";
-            var expectedCount = 2;
-
-            using (var context = GetDbContext())
-            {
-                // act
-                var actualIQueryable = context.Persons.Where(
-                    p => p.FirstName.Contains(searchString) || p.LastName.Contains(searchString));
-
-                DebugIQueryable(actualIQueryable);
-
-                var actual = actualIQueryable.ToList();
-
-                // assert
-                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
-            }
-        }
-
-        private void DebugIQueryable(IQueryable<Person> actualIQueryable)
-        {
-            var rootExpression = actualIQueryable.Expression;
-
-            Console.WriteLine("asdf");
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
         }
 
         private List<Person> CreateSamplePersonRecords()
@@ -415,6 +173,7 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             returnValues.Add(CreatePerson("Sally", "Kahbonka"));
             returnValues.Add(CreatePerson("Turk", "Menistan"));
             returnValues.Add(CreatePerson("Mary Ann", "Thump"));
+            returnValues.Add(CreatePerson("Bonk", "Errific"));
 
             context.Persons.AddRange(returnValues);
 
