@@ -106,8 +106,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             var expectedCount = 3;
 
             var search = new Search();
-            search.AddArgument("LastName", SearchMethod.Contains, searchString);
-            search.AddArgument("FirstName", SearchMethod.Contains, searchString);
+            search.AddArgument("LastName", SearchMethod.Contains, searchString, SearchOperator.Or);
+            search.AddArgument("FirstName", SearchMethod.Contains, searchString, SearchOperator.Or);
 
             // act
             var actual = SystemUnderTest.Search(search);
@@ -153,6 +153,43 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
         }
 
+        [TestMethod]
+        public void PersonSearchableRepository_Search_Equals_OneCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchString = "thump";
+            var expectedCount = 2;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.Equals, searchString);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+        }
+
+        [TestMethod]
+        public void PersonSearchableRepository_Search_Equals_TwoCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchString = "onk";
+            var expectedCount = 3;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.Contains, searchString, SearchOperator.Or);
+            search.AddArgument("FirstName", SearchMethod.Contains, searchString, SearchOperator.Or);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+        }
+
         private List<Person> CreateSamplePersonRecords()
         {
             using (var context = GetDbContext())
@@ -173,6 +210,7 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             returnValues.Add(CreatePerson("Sally", "Kahbonka"));
             returnValues.Add(CreatePerson("Turk", "Menistan"));
             returnValues.Add(CreatePerson("Mary Ann", "Thump"));
+            returnValues.Add(CreatePerson("Gladys", "Thump"));
             returnValues.Add(CreatePerson("Bonk", "Errific"));
 
             context.Persons.AddRange(returnValues);

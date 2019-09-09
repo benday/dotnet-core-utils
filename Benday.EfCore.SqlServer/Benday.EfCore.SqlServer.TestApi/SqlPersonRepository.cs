@@ -120,7 +120,7 @@ namespace Benday.EfCore.SqlServer.TestApi
             }
         }
 
-        protected override Expression<Func<Person, bool>> GetPredicateForExact(SearchArgument arg)
+        protected override Expression<Func<Person, bool>> GetPredicateForEquals(SearchArgument arg)
         {
             if (arg is null)
             {

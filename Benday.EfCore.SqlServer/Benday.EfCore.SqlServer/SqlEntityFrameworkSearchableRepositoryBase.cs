@@ -43,11 +43,11 @@ namespace Benday.EfCore.SqlServer
                     {
                         predicate = GetPredicateForEndsWith(arg);
                     }
-                    else if (arg.Method == SearchMethod.Exact)
+                    else if (arg.Method == SearchMethod.Equals)
                     {
-                        predicate = GetPredicateForExact(arg);
+                        predicate = GetPredicateForEquals(arg);
                     }
-                    else if (arg.Method == SearchMethod.IsNot)
+                    else if (arg.Method == SearchMethod.IsNotEqual)
                     {
                         predicate = GetPredicateForIsNotEqualTo(arg);
                     }
@@ -56,17 +56,28 @@ namespace Benday.EfCore.SqlServer
                         predicate = GetPredicateForDoesNotContain(arg);
                     }
 
-                    if (whereClausePredicate == null)
+                    if (predicate == null)
+                    {
+                        // if predicate is null, the implementer chose to ignore this 
+                        // search argument and returned null as an indication to skip
+                        continue;
+                    }
+                    else if (whereClausePredicate == null)
                     {
                         whereClausePredicate = predicate;
                     }
-                    if (arg.CombineWithOtherArgumentsAs == SearchOperator.Or)
+                    else if (arg.Operator == SearchOperator.Or)
                     {
                         whereClausePredicate = whereClausePredicate.Or(predicate);
                     }
+                    else if (arg.Operator == SearchOperator.And)
+                    {
+                        whereClausePredicate = whereClausePredicate.And(predicate);
+                    }
                     else
                     {
-                        whereClausePredicate = whereClausePredicate.Or(predicate);
+                        throw new InvalidOperationException(
+                            String.Format("Search operator '{0}' is not supported.", arg.Operator));
                     }
                 }
 
@@ -94,7 +105,7 @@ namespace Benday.EfCore.SqlServer
             SearchArgument arg);
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForIsNotEqualTo(
             SearchArgument arg);
-        protected abstract Expression<Func<TEntity, bool>> GetPredicateForExact(
+        protected abstract Expression<Func<TEntity, bool>> GetPredicateForEquals(
             SearchArgument arg);
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForEndsWith(
             SearchArgument arg);
