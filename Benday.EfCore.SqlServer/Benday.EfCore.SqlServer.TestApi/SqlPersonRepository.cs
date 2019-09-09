@@ -97,18 +97,16 @@ namespace Benday.EfCore.SqlServer.TestApi
 
                 if (arg.PropertyName == "FirstName")
                 {
-                    returnValue = (p) => p.FirstName.EndsWith(arg.SearchValue,
-                        StringComparison.CurrentCulture);
+                    returnValue = (p) => p.FirstName.EndsWith(arg.SearchValue);
                 }
                 else if (arg.PropertyName == "LastName")
                 {
-                    returnValue = (p) => p.LastName.EndsWith(arg.SearchValue,
-                        StringComparison.CurrentCulture);
+                    returnValue = (p) => p.LastName.EndsWith(arg.SearchValue);
                 }
                 else if (arg.PropertyName == "NoteText")
                 {
                     returnValue = (p) => p.Notes.Any(n => n.NoteText.EndsWith(
-                        arg.SearchValue, StringComparison.CurrentCulture));
+                        arg.SearchValue));
                 }
                 else
                 {
@@ -196,18 +194,16 @@ namespace Benday.EfCore.SqlServer.TestApi
 
                 if (arg.PropertyName == "FirstName")
                 {
-                    returnValue = (p) => p.FirstName.StartsWith(arg.SearchValue,
-                        StringComparison.CurrentCulture);
+                    returnValue = (p) => p.FirstName.StartsWith(arg.SearchValue);
                 }
                 else if (arg.PropertyName == "LastName")
                 {
-                    returnValue = (p) => p.LastName.StartsWith(arg.SearchValue,
-                        StringComparison.CurrentCulture);
+                    returnValue = (p) => p.LastName.StartsWith(arg.SearchValue);
                 }
                 else if (arg.PropertyName == "NoteText")
                 {
                     returnValue = (p) => p.Notes.Any(n => n.NoteText.StartsWith(
-                        arg.SearchValue, StringComparison.CurrentCulture));
+                        arg.SearchValue));
                 }
                 else
                 {

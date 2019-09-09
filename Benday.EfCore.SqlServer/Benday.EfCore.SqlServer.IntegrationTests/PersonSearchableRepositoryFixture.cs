@@ -170,7 +170,7 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
         }
-
+               
         [TestMethod]
         public void PersonSearchableRepository_Search_Equals_TwoCriteria()
         {
@@ -182,6 +182,96 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             var search = new Search();
             search.AddArgument("LastName", SearchMethod.Contains, searchString, SearchOperator.Or);
             search.AddArgument("FirstName", SearchMethod.Contains, searchString, SearchOperator.Or);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+        }
+
+        [TestMethod]
+        public void PersonSearchableRepository_Search_StartsWith_OneCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchString = "had";
+            var expectedCount = 1;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.StartsWith, searchString, SearchOperator.Or);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+        }
+
+        [TestMethod]
+        public void PersonSearchableRepository_Search_StartsWith_TwoCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 1;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.StartsWith, "thu", SearchOperator.And);
+            search.AddArgument("FirstName", SearchMethod.StartsWith, "glad", SearchOperator.And);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+        }
+
+        [TestMethod]
+        public void PersonSearchableRepository_Search_NotEqual_OneCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchString = "thump";
+            var expectedCount = 6;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.IsNotEqual, searchString);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+        }
+
+        [TestMethod]
+        public void PersonSearchableRepository_Search_EndsWith_OneCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchString = "lamb";
+            var expectedCount = 1;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.EndsWith, searchString);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+        }
+
+        [TestMethod]
+        public void PersonSearchableRepository_Search_DoesNotContain_OneCriteria()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchString = "bon";
+            var expectedCount = 6;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.DoesNotContain, searchString);
 
             // act
             var actual = SystemUnderTest.Search(search);

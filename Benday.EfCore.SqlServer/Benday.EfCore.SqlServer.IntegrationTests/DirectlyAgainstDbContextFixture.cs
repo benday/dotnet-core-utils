@@ -126,6 +126,29 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
+        public void LinqQuery_ContainsAndQueryAgainstDbContext_StartsWith_OneCriteria_OneResult()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchStringLastName = "had";
+            var expectedCount = 1;
+
+            using (var context = GetDbContext())
+            {
+                // act
+                var query = context.Persons.Where(
+                    p => p.LastName.StartsWith(searchStringLastName));
+
+                DebugIQueryable(query);
+
+                var actual = query.ToList();
+
+                // assert
+                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+            }
+        }
+        
+        [TestMethod]
         public void DynamicQuery_ContainsAndQueryAgainstDbContext_ReturnsOneMatches()
         {
             // arrange
