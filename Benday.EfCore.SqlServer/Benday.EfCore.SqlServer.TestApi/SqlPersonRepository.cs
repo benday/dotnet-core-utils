@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Benday.Common;
@@ -18,6 +19,18 @@ namespace Benday.EfCore.SqlServer.TestApi
             get
             {
                 return Context.Persons;
+            }
+        }
+
+        protected override List<string> Includes
+        {
+            get
+            {
+                var includes = new List<string>();
+
+                includes.Add(nameof(Person.Notes));
+
+                return includes;
             }
         }
 
@@ -214,38 +227,5 @@ namespace Benday.EfCore.SqlServer.TestApi
                 return returnValue;
             }
         }
-
-        /*
-        protected override Expression<Func<Person, bool>> AddWhereClauseForContains(
-            Expression<Func<Person, bool>> predicate, SearchArgument arg)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Expression<Func<Person, bool>> AddWhereClauseForDoesNotContain(Expression<Func<Person, bool>> predicate, SearchArgument arg)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Expression<Func<Person, bool>> AddWhereClauseForEndsWith(Expression<Func<Person, bool>> predicate, SearchArgument arg)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Expression<Func<Person, bool>> AddWhereClauseForExact(Expression<Func<Person, bool>> predicate, SearchArgument arg)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Expression<Func<Person, bool>> AddWhereClauseForIsNotEqualTo(Expression<Func<Person, bool>> predicate, SearchArgument arg)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Expression<Func<Person, bool>> AddWhereClauseForStartsWith(Expression<Func<Person, bool>> predicate, SearchArgument arg)
-        {
-            throw new NotImplementedException();
-        }
-        */
     }
 }

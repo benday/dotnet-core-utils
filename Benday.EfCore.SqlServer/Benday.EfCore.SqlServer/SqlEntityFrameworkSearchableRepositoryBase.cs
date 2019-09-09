@@ -82,6 +82,8 @@ namespace Benday.EfCore.SqlServer
                 }
 
                 var query = EntityDbSet.Where(whereClausePredicate);
+
+                query = AddIncludes(query);
                 
                 query = BeforeSearch(query, search);
 

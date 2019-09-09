@@ -245,6 +245,31 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
+        public void PersonSearchableRepository_Search_AddsIncludesForChildObjects()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var searchString = "thump";
+            var expectedCount = 6;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.IsNotEqual, searchString);
+
+            // act
+            var actuals = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actuals.Count, "Reloaded record count was wrong");
+
+            foreach (var actual in actuals)
+            {
+                Assert.IsNotNull(actual.Notes, "Notes collection was null.");
+
+                Assert.AreNotEqual<int>(0, actual.Notes.Count, "Note count should not be zero.");
+            }
+        }
+
+        [TestMethod]
         public void PersonSearchableRepository_Search_EndsWith_OneCriteria()
         {
             // arrange
