@@ -6,7 +6,7 @@
         DoesNotContain,
         StartsWith,
         EndsWith,
-        Exact,
-        IsNot
+        Equals,
+        IsNotEqual
     }
 }
