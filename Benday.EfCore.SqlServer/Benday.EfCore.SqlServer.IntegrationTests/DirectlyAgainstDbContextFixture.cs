@@ -107,7 +107,6 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         {
             // arrange
             var data = CreateSamplePersonRecords();
-            var searchStringLastName = "onk";
             var expectedCount = 2;
 
             using (var context = GetDbContext())
@@ -177,8 +176,6 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         {
             // arrange
             var data = CreateSamplePersonRecords();
-            var searchStringFirstName = "bonk";
-            var searchStringLastName = "bonk";
             var expectedCount = 1;
 
             using (var context = GetDbContext())
@@ -263,7 +260,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
-        public void DynamicQuery_Contains_TwoCriteria_AlternateVersion_EvaluatedInMemory()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void DynamicQuery_Contains_TwoCriteria_AlternateVersion_EvaluatedInMemory_ThrowsException()
         {
             // arrange
             var data = CreateSamplePersonRecords();
