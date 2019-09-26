@@ -9,5 +9,6 @@ namespace Benday.EfCore.SqlServer.TestApi
         }
 
         public DbSet<Person> Persons { get; set; }
+        public DbSet<EmailNewsletterSubscription> EmailNewsletterSubscriptions { get; set; }
     }
 }
