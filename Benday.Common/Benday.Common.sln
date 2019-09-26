@@ -1,7 +1,10 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benday.Common", "Benday.Common\Benday.Common.csproj", "{865F607D-CA6E-4D5F-8EAA-8560C814B75E}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29324.140
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benday.Common", "Benday.Common\Benday.Common.csproj", "{865F607D-CA6E-4D5F-8EAA-8560C814B75E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benday.Common.UnitTests", "Benday.Common.UnitTests\Benday.Common.UnitTests.csproj", "{E70BDAD2-7A74-494A-BA4A-9D2D8B52936E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,5 +16,15 @@ Global
 		{865F607D-CA6E-4D5F-8EAA-8560C814B75E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{865F607D-CA6E-4D5F-8EAA-8560C814B75E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{865F607D-CA6E-4D5F-8EAA-8560C814B75E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E70BDAD2-7A74-494A-BA4A-9D2D8B52936E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E70BDAD2-7A74-494A-BA4A-9D2D8B52936E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E70BDAD2-7A74-494A-BA4A-9D2D8B52936E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E70BDAD2-7A74-494A-BA4A-9D2D8B52936E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EBE3C42B-4AB2-459F-8A80-CB3972E2AF49}
 	EndGlobalSection
 EndGlobal
