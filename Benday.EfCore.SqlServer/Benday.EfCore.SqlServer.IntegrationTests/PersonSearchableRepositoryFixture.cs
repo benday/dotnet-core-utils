@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
+// using Microsoft.Extensions.Logging.Console;
 using System.Linq.Expressions;
 using Microsoft.Extensions.DependencyInjection;
 using Benday.Common;
