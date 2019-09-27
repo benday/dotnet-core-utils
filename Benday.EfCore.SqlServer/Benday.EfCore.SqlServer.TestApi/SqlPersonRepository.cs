@@ -227,5 +227,135 @@ namespace Benday.EfCore.SqlServer.TestApi
                 return returnValue;
             }
         }
+
+        protected override IQueryable<Person> AddSorts(
+            Search search, IQueryable<Person> query)
+        {
+            if (search is null)
+            {
+                throw new ArgumentNullException(nameof(search));
+            }
+
+            if (query is null)
+            {
+                throw new ArgumentNullException(nameof(query));
+            }
+
+            if (search.Sorts == null || search.Sorts.Count == 0)
+            {
+                return query;
+            }
+            else if (search.Sorts.Count == 1)
+            {
+                return AddSort((IOrderedQueryable<Person>)query, search.Sorts[0], true);
+            }
+            else
+            {
+                bool isFirst = true;
+                
+                foreach (var item in search.Sorts)
+                {
+                    query = AddSort((IOrderedQueryable<Person>)query, item, isFirst);
+
+                    isFirst = false;
+                }
+
+                return query;
+            }
+        }
+
+        private IQueryable<Person> AddSort(IOrderedQueryable<Person> query, SortBy sort, bool isFirstSort)
+        {
+            if (sort.Direction == SearchConstants.SortDirectionAscending)
+            {
+                return AddSortAscending(query, sort.PropertyName, isFirstSort);
+            }
+            else
+            {
+                return AddSortDescending(query, sort.PropertyName, isFirstSort);
+            }
+        }        
+
+        private IOrderedQueryable<Person> AddSortDescending(IOrderedQueryable<Person> query, string propertyName, bool isFirstSort)
+        {
+            if (propertyName == "FirstName")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderByDescending(x => x.FirstName);
+                }
+                else
+                {
+                    return query.ThenByDescending(x => x.FirstName);
+                }                                
+            }
+            else if (propertyName == "LastName")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderByDescending(x => x.LastName);
+                }
+                else
+                {
+                    return query.ThenByDescending(x => x.LastName);
+                }
+            }
+            else if (propertyName == "Id")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderByDescending(x => x.Id);
+                }
+                else
+                {
+                    return query.ThenByDescending(x => x.Id);
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private IOrderedQueryable<Person> AddSortAscending(IOrderedQueryable<Person> query, string propertyName, bool isFirstSort)
+        {
+            if (propertyName == "FirstName")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderBy(x => x.FirstName);
+                }
+                else
+                {
+                    return query.ThenBy(x => x.FirstName);
+                }
+            }
+            else if (propertyName == "LastName")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderBy(x => x.LastName);
+                }
+                else
+                {
+                    return query.ThenBy(x => x.LastName);
+                }
+            }
+            else if (propertyName == "Id")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderBy(x => x.Id);
+                }
+                else
+                {
+                    return query.ThenBy(x => x.Id);
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

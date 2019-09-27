@@ -214,6 +214,26 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
+        public void DynamicQuery_NoCriteria_WithOrderBy()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 6;
+
+            using (var context = GetDbContext())
+            {
+                // act
+                
+                var query = context.Persons.OrderBy(p => p.LastName).OrderBy(p => p.FirstName);
+
+                var actual = query.ToList();
+
+                // assert
+                Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+            }
+        }
+
+        [TestMethod]
         public void DynamicQuery_Contains_TwoCriteria()
         {
             // arrange

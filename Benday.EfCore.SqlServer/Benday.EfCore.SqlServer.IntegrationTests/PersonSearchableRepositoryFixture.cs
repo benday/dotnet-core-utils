@@ -309,6 +309,28 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
+        public void PersonSearchableRepository_Search_NoCriteria_TwoSorts_Ascending()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 8;
+
+            var search = new Search();
+            search.AddSort("LastName");
+            search.AddSort("FirstName");
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+
+            var expected = actual.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList();
+
+            AssertAreEqual(expected, actual, "Sorted by last name ascending");
+        }
+
+        [TestMethod]
         public void PersonSearchableRepository_Search_OneCriteria_OneSort_Ascending()
         {
             // arrange

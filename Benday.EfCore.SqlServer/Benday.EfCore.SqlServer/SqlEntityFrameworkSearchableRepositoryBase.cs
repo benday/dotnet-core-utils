@@ -42,6 +42,8 @@ namespace Benday.EfCore.SqlServer
 
                 query = AddIncludes(query);
 
+                query = AddSorts(search, query);
+
                 query = BeforeSearch(query, search);
 
                 if (search.MaxNumberOfResults == -1)
@@ -53,6 +55,11 @@ namespace Benday.EfCore.SqlServer
                     return query.Take(search.MaxNumberOfResults).ToList();
                 }
             }
+        }
+
+        protected virtual IQueryable<TEntity> AddSorts(Search search, IQueryable<TEntity> query)
+        {
+            return query;
         }
 
         private Expression<Func<TEntity, bool>> GetWhereClause(Search search)
@@ -131,6 +138,6 @@ namespace Benday.EfCore.SqlServer
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForStartsWith(
             SearchArgument arg);
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForContains(
-            SearchArgument arg);
+            SearchArgument arg);      
     }
 }
