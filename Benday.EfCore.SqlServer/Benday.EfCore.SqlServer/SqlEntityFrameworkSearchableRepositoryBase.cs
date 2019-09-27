@@ -20,71 +20,28 @@ namespace Benday.EfCore.SqlServer
 
         public virtual IList<TEntity> Search(Search search)
         {
-            if (search == null || search.Arguments.Count == 0)
+            if (search == null)
             {
                 return new List<TEntity>();
             }
             else
             {
                 Expression<Func<TEntity, bool>> whereClausePredicate = null;
-                Expression<Func<TEntity, bool>> predicate = null;
+                whereClausePredicate = GetWhereClause(search);
 
-                foreach (var arg in search.Arguments)
+                IQueryable<TEntity> query = null;
+
+                if (whereClausePredicate == null)
                 {
-                    if (arg.Method == SearchMethod.Contains)
-                    {
-                        predicate = GetPredicateForContains(arg);
-                    }
-                    else if (arg.Method == SearchMethod.StartsWith)
-                    {
-                        predicate = GetPredicateForStartsWith(arg);
-                    }
-                    else if (arg.Method == SearchMethod.EndsWith)
-                    {
-                        predicate = GetPredicateForEndsWith(arg);
-                    }
-                    else if (arg.Method == SearchMethod.Equals)
-                    {
-                        predicate = GetPredicateForEquals(arg);
-                    }
-                    else if (arg.Method == SearchMethod.IsNotEqual)
-                    {
-                        predicate = GetPredicateForIsNotEqualTo(arg);
-                    }
-                    else if (arg.Method == SearchMethod.DoesNotContain)
-                    {
-                        predicate = GetPredicateForDoesNotContain(arg);
-                    }
-
-                    if (predicate == null)
-                    {
-                        // if predicate is null, the implementer chose to ignore this 
-                        // search argument and returned null as an indication to skip
-                        continue;
-                    }
-                    else if (whereClausePredicate == null)
-                    {
-                        whereClausePredicate = predicate;
-                    }
-                    else if (arg.Operator == SearchOperator.Or)
-                    {
-                        whereClausePredicate = whereClausePredicate.Or(predicate);
-                    }
-                    else if (arg.Operator == SearchOperator.And)
-                    {
-                        whereClausePredicate = whereClausePredicate.And(predicate);
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException(
-                            String.Format("Search operator '{0}' is not supported.", arg.Operator));
-                    }
+                    query = EntityDbSet.AsQueryable();
+                }
+                else
+                {
+                    query = EntityDbSet.Where(whereClausePredicate);
                 }
 
-                var query = EntityDbSet.Where(whereClausePredicate);
-
                 query = AddIncludes(query);
-                
+
                 query = BeforeSearch(query, search);
 
                 if (search.MaxNumberOfResults == -1)
@@ -96,6 +53,66 @@ namespace Benday.EfCore.SqlServer
                     return query.Take(search.MaxNumberOfResults).ToList();
                 }
             }
+        }
+
+        private Expression<Func<TEntity, bool>> GetWhereClause(Search search)
+        {
+            Expression<Func<TEntity, bool>> whereClausePredicate = null;
+            Expression<Func<TEntity, bool>> predicate = null;
+
+            foreach (var arg in search.Arguments)
+            {
+                if (arg.Method == SearchMethod.Contains)
+                {
+                    predicate = GetPredicateForContains(arg);
+                }
+                else if (arg.Method == SearchMethod.StartsWith)
+                {
+                    predicate = GetPredicateForStartsWith(arg);
+                }
+                else if (arg.Method == SearchMethod.EndsWith)
+                {
+                    predicate = GetPredicateForEndsWith(arg);
+                }
+                else if (arg.Method == SearchMethod.Equals)
+                {
+                    predicate = GetPredicateForEquals(arg);
+                }
+                else if (arg.Method == SearchMethod.IsNotEqual)
+                {
+                    predicate = GetPredicateForIsNotEqualTo(arg);
+                }
+                else if (arg.Method == SearchMethod.DoesNotContain)
+                {
+                    predicate = GetPredicateForDoesNotContain(arg);
+                }
+
+                if (predicate == null)
+                {
+                    // if predicate is null, the implementer chose to ignore this 
+                    // search argument and returned null as an indication to skip
+                    continue;
+                }
+                else if (whereClausePredicate == null)
+                {
+                    whereClausePredicate = predicate;
+                }
+                else if (arg.Operator == SearchOperator.Or)
+                {
+                    whereClausePredicate = whereClausePredicate.Or(predicate);
+                }
+                else if (arg.Operator == SearchOperator.And)
+                {
+                    whereClausePredicate = whereClausePredicate.And(predicate);
+                }
+                else
+                {
+                    throw new InvalidOperationException(
+                        String.Format("Search operator '{0}' is not supported.", arg.Operator));
+                }
+            }
+
+            return whereClausePredicate;
         }
 
         protected virtual IQueryable<TEntity> BeforeSearch(IQueryable<TEntity> query, Search search)

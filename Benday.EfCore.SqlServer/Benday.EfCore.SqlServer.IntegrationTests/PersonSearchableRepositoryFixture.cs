@@ -288,6 +288,78 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
         }
 
         [TestMethod]
+        public void PersonSearchableRepository_Search_NoCriteria_OneSort_Ascending()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 8;
+
+            var search = new Search();
+            search.AddSort("LastName");
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+
+            var expected = actual.OrderBy(x => x.LastName).ToList();
+
+            AssertAreEqual(expected, actual, "Sorted by last name ascending");
+        }
+
+        [TestMethod]
+        public void PersonSearchableRepository_Search_OneCriteria_OneSort_Ascending()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 2;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.Equals, "Thump");
+            search.AddSort("FirstName", SearchConstants.SortDirectionAscending);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+
+
+            Assert.AreEqual<string>("Gladys", actual[0].FirstName, "Unexpected first name item 0");
+            Assert.AreEqual<string>("Mary Ann", actual[1].FirstName, "Unexpected first name item 1");
+        }
+
+        [TestMethod]
+        public void PersonSearchableRepository_Search_OneCriteria_OneSort_Descending()
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 2;
+
+            var search = new Search();
+            search.AddArgument("LastName", SearchMethod.Equals, "Thump");
+            search.AddSort("FirstName", SearchConstants.SortDirectionDescending);
+
+            // act
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+
+
+            Assert.AreEqual<string>("Mary Ann", actual[0].FirstName, "Unexpected first name item 0");
+            Assert.AreEqual<string>("Gladys", actual[1].FirstName, "Unexpected first name item 1");
+        }
+
+        private void AssertAreEqual(List<Person> expected, IList<Person> actual, string message)
+        {
+            var actualAsList = actual.ToList();
+
+            CollectionAssert.AreEqual(expected, actualAsList, message);
+        }
+
+        [TestMethod]
         public void PersonSearchableRepository_Search_DoesNotContain_OneCriteria()
         {
             // arrange
