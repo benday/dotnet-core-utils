@@ -2,7 +2,7 @@
 {
     public class SortBy
     {
-        public string SortByValue { get; set; }
-        public string SortDirection { get; set; }
+        public string PropertyName { get; set; }
+        public string Direction { get; set; }
     }
 }
