@@ -227,5 +227,87 @@ namespace Benday.EfCore.SqlServer.TestApi
                 return returnValue;
             }
         }
+
+        protected override IOrderedQueryable<Person> AddSortDescending(IOrderedQueryable<Person> query, string propertyName, bool isFirstSort)
+        {
+            if (propertyName == "FirstName")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderByDescending(x => x.FirstName);
+                }
+                else
+                {
+                    return query.ThenByDescending(x => x.FirstName);
+                }                                
+            }
+            else if (propertyName == "LastName")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderByDescending(x => x.LastName);
+                }
+                else
+                {
+                    return query.ThenByDescending(x => x.LastName);
+                }
+            }
+            else if (propertyName == "Id")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderByDescending(x => x.Id);
+                }
+                else
+                {
+                    return query.ThenByDescending(x => x.Id);
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        protected override IOrderedQueryable<Person> AddSortAscending(IOrderedQueryable<Person> query, string propertyName, bool isFirstSort)
+        {
+            if (propertyName == "FirstName")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderBy(x => x.FirstName);
+                }
+                else
+                {
+                    return query.ThenBy(x => x.FirstName);
+                }
+            }
+            else if (propertyName == "LastName")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderBy(x => x.LastName);
+                }
+                else
+                {
+                    return query.ThenBy(x => x.LastName);
+                }
+            }
+            else if (propertyName == "Id")
+            {
+                if (isFirstSort == true)
+                {
+                    return query.OrderBy(x => x.Id);
+                }
+                else
+                {
+                    return query.ThenBy(x => x.Id);
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }
