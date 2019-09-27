@@ -57,10 +57,76 @@ namespace Benday.EfCore.SqlServer
             }
         }
 
-        protected virtual IQueryable<TEntity> AddSorts(Search search, IQueryable<TEntity> query)
+        protected virtual IQueryable<TEntity> AddSorts(
+            Search search, IQueryable<TEntity> query)
         {
-            return query;
+            if (search is null)
+            {
+                throw new ArgumentNullException(nameof(search));
+            }
+
+            if (query is null)
+            {
+                throw new ArgumentNullException(nameof(query));
+            }
+
+            if (search.Sorts == null || search.Sorts.Count == 0)
+            {
+                return query;
+            }
+            else
+            {
+                IOrderedQueryable<TEntity> asOrderedQueryable = null;
+
+                if (query is IOrderedQueryable<TEntity>)
+                {
+                    asOrderedQueryable = (IOrderedQueryable<TEntity>)query;
+                }
+                else
+                {
+                    asOrderedQueryable = ConvertToOrderedQueryable(query);
+                }
+
+                if (search.Sorts.Count == 1)
+                {
+                    return AddSort(asOrderedQueryable, search.Sorts[0], true);
+                }
+                else
+                {
+                    bool isFirst = true;
+
+                    foreach (var item in search.Sorts)
+                    {
+                        query = AddSort(asOrderedQueryable, item, isFirst);
+
+                        isFirst = false;
+                    }
+
+                    return query;
+                }
+            }            
         }
+
+        protected virtual IOrderedQueryable<TEntity> ConvertToOrderedQueryable(IQueryable<TEntity> query)
+        {
+            return query.OrderBy(x => 0);
+        }
+
+        protected virtual IQueryable<TEntity> AddSort(IOrderedQueryable<TEntity> query, SortBy sort, bool isFirstSort)
+        {
+            if (sort.Direction == SearchConstants.SortDirectionAscending)
+            {
+                return AddSortAscending(query, sort.PropertyName, isFirstSort);
+            }
+            else
+            {
+                return AddSortDescending(query, sort.PropertyName, isFirstSort);
+            }
+        }
+
+        protected abstract IOrderedQueryable<TEntity> AddSortAscending(IOrderedQueryable<TEntity> query, string propertyName, bool isFirstSort);
+
+        protected abstract IOrderedQueryable<TEntity> AddSortDescending(IOrderedQueryable<TEntity> query, string propertyName, bool isFirstSort);
 
         private Expression<Func<TEntity, bool>> GetWhereClause(Search search)
         {
