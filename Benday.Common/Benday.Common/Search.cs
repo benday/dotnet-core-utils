@@ -30,12 +30,12 @@ namespace Benday.Common
 
         public List<SortBy> Sorts { get; set; }
 
-        public void AddSort(string sortByValue, 
+        public void AddSort(string sortByPropertyName, 
             string direction = SearchConstants.SortDirectionAscending)
         {
-            if (sortByValue is null)
+            if (sortByPropertyName is null)
             {
-                throw new System.ArgumentNullException(nameof(sortByValue));
+                throw new System.ArgumentNullException(nameof(sortByPropertyName));
             }
 
             if (direction is null)
@@ -65,8 +65,8 @@ namespace Benday.Common
 
             AddSort(new SortBy()
             {
-                SortByValue = sortByValue,
-                SortDirection = directionCleaned
+                PropertyName = sortByPropertyName,
+                Direction = directionCleaned
             });
         }
 
@@ -79,7 +79,7 @@ namespace Benday.Common
 
             var match = (from temp in Sorts
                          where 
-                            String.Compare(temp.SortByValue, sortBy.SortByValue, true) == 0
+                            String.Compare(temp.PropertyName, sortBy.PropertyName, true) == 0
                          select temp).FirstOrDefault();
 
             if (match == null)

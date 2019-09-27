@@ -106,8 +106,8 @@ namespace Benday.Common.UnitTests
         {
             Assert.IsNotNull(actual, "sortby is null");
 
-            Assert.AreEqual<string>(expectedSortByValue, actual.SortByValue, "SortByValue");
-            Assert.AreEqual<string>(expectedSortDirection, actual.SortDirection, "SortDirection");
+            Assert.AreEqual<string>(expectedSortByValue, actual.PropertyName, "SortByValue");
+            Assert.AreEqual<string>(expectedSortDirection, actual.Direction, "SortDirection");
         }
 
         [TestMethod]
