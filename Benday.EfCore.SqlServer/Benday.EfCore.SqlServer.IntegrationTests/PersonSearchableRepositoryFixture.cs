@@ -170,7 +170,7 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
         }
-               
+
         [TestMethod]
         public void PersonSearchableRepository_Search_Equals_TwoCriteria()
         {
@@ -306,6 +306,62 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             var expected = actual.OrderBy(x => x.LastName).ToList();
 
             AssertAreEqual(expected, actual, "Sorted by last name ascending");
+        }
+
+        [DataTestMethod]
+        [DataRow("    ", DisplayName = "whitespace string")]
+        [DataRow("", DisplayName = "empty string")]
+        public void PersonSearchableRepository_Search_SingleSort_IgnoresEmptySort(string sortBy)
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 8;
+
+            var search = new Search();
+            search.AddSort(sortBy);
+
+            Assert.AreEqual<int>(1, search.Sorts.Count, "Sort count was wrong");
+
+            // act
+            var unsortedResults = SystemUnderTest.Search(new Search());
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+
+            var expected = unsortedResults.ToList();
+
+            AssertAreEqual(expected, actual, "Sorted by nothing in particular");
+        }
+
+        [DataTestMethod]
+        [DataRow("    ", DisplayName = "whitespace string")]
+        [DataRow("", DisplayName = "empty string")]
+        public void PersonSearchableRepository_Search_MultipleSorts_IgnoresEmptySort(string sortBy)
+        {
+            // arrange
+            var data = CreateSamplePersonRecords();
+            var expectedCount = 8;
+
+            var search = new Search();
+            search.AddSort(nameof(Person.FirstName));
+            search.AddSort(sortBy);
+
+            Assert.AreEqual<int>(2, search.Sorts.Count, "Sort count was wrong");
+
+            var expectedDataSearch = new Search();
+            expectedDataSearch.AddSort(nameof(Person.FirstName));
+
+            // act
+            var unsortedResults = SystemUnderTest.Search(expectedDataSearch);
+            var actual = SystemUnderTest.Search(search);
+
+            // assert
+            Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
+
+            var expected = unsortedResults.ToList();
+
+            AssertAreEqual(expected, actual, "Sorted by nothing in particular");
         }
 
         [TestMethod]
