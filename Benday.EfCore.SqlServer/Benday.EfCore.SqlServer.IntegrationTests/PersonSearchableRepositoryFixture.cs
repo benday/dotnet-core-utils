@@ -91,7 +91,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("LastName", SearchMethod.Contains, searchString);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -110,7 +111,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("FirstName", SearchMethod.Contains, searchString, SearchOperator.Or);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -129,7 +131,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("FirstName", SearchMethod.Contains, searchString);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -147,7 +150,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("NoteText", SearchMethod.Contains, searchString);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -165,7 +169,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("LastName", SearchMethod.Equals, searchString);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -184,7 +189,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("FirstName", SearchMethod.Contains, searchString, SearchOperator.Or);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -202,7 +208,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("LastName", SearchMethod.StartsWith, searchString, SearchOperator.Or);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -220,7 +227,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("FirstName", SearchMethod.StartsWith, "glad", SearchOperator.And);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -238,7 +246,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("LastName", SearchMethod.IsNotEqual, searchString);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -256,7 +265,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("LastName", SearchMethod.IsNotEqual, searchString);
 
             // act
-            var actuals = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actuals = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actuals.Count, "Reloaded record count was wrong");
@@ -281,7 +291,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("LastName", SearchMethod.EndsWith, searchString);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -298,7 +309,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddSort("LastName");
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -323,8 +335,9 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             Assert.AreEqual<int>(1, search.Sorts.Count, "Sort count was wrong");
 
             // act
-            var unsortedResults = SystemUnderTest.Search(new Search());
-            var actual = SystemUnderTest.Search(search);
+            var unsortedResults = SystemUnderTest.Search(new Search()).Results;
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -353,8 +366,9 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             expectedDataSearch.AddSort(nameof(Person.FirstName));
 
             // act
-            var unsortedResults = SystemUnderTest.Search(expectedDataSearch);
-            var actual = SystemUnderTest.Search(search);
+            var unsortedResults = SystemUnderTest.Search(expectedDataSearch).Results;
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -376,7 +390,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddSort("FirstName");
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -398,7 +413,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddSort("FirstName", SearchConstants.SortDirectionDescending);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -420,7 +436,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddSort("FirstName", SearchConstants.SortDirectionAscending);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -442,7 +459,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddSort("FirstName", SearchConstants.SortDirectionDescending);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");
@@ -471,7 +489,8 @@ namespace Benday.EfCore.SqlServer.IntegrationTests
             search.AddArgument("LastName", SearchMethod.DoesNotContain, searchString);
 
             // act
-            var actual = SystemUnderTest.Search(search);
+            var result = SystemUnderTest.Search(search);
+            var actual = result.Results;
 
             // assert
             Assert.AreEqual<int>(expectedCount, actual.Count, "Reloaded record count was wrong");

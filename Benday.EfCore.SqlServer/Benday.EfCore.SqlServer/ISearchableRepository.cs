@@ -6,6 +6,6 @@ namespace Benday.EfCore.SqlServer
     public interface ISearchableRepository<T> : IRepository<T> 
         where T : IInt32Identity
     {
-        IList<T> Search(Search search);
+        SearchResult<T> Search(Search search);
     }
 }

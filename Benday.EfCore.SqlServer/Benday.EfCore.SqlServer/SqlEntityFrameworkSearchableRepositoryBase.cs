@@ -18,11 +18,15 @@ namespace Benday.EfCore.SqlServer
 
         }
 
-        public virtual IList<TEntity> Search(Search search)
+        public virtual SearchResult<TEntity> Search(Search search)
         {
+            var returnValue = new SearchResult<TEntity>();
+            
+            returnValue.SearchRequest = search;
+
             if (search == null)
             {
-                return new List<TEntity>();
+                returnValue.Results = new List<TEntity>();
             }
             else
             {
@@ -48,13 +52,15 @@ namespace Benday.EfCore.SqlServer
 
                 if (search.MaxNumberOfResults == -1)
                 {
-                    return query.ToList();
+                    returnValue.Results = query.ToList();
                 }
                 else
                 {
-                    return query.Take(search.MaxNumberOfResults).ToList();
+                    returnValue.Results = query.Take(search.MaxNumberOfResults).ToList();
                 }
             }
+
+            return returnValue;
         }
 
         protected virtual IOrderedQueryable<TEntity> EnsureIsOrderedQueryable(IQueryable<TEntity> query)
@@ -71,13 +77,13 @@ namespace Benday.EfCore.SqlServer
 
         protected virtual IOrderedQueryable<TEntity> AddSort(IOrderedQueryable<TEntity> query, SortBy sort, bool isFirstSort)
         {
-            if (sort.Direction == SearchConstants.SortDirectionAscending)
+            if (sort.SortDirection == SearchConstants.SortDirectionAscending)
             {
-                return AddSortAscending(query, sort.PropertyName, isFirstSort);
+                return AddSortAscending(query, sort.SortByValue, isFirstSort);
             }
             else
             {
-                return AddSortDescending(query, sort.PropertyName, isFirstSort);
+                return AddSortDescending(query, sort.SortByValue, isFirstSort);
             }
         }
 
@@ -102,7 +108,7 @@ namespace Benday.EfCore.SqlServer
             }
             else if (search.Sorts.Count == 1)
             {
-                if (String.IsNullOrWhiteSpace(search.Sorts[0].PropertyName) == false)
+                if (String.IsNullOrWhiteSpace(search.Sorts[0].SortByValue) == false)
                 {
                     var returnValue = AddSort(EnsureIsOrderedQueryable(query), search.Sorts[0], true);
 
@@ -119,7 +125,7 @@ namespace Benday.EfCore.SqlServer
 
                 foreach (var item in search.Sorts)
                 {
-                    if (String.IsNullOrWhiteSpace(item.PropertyName) == false)
+                    if (String.IsNullOrWhiteSpace(item.SortByValue) == false)
                     {
                         query = AddSort(EnsureIsOrderedQueryable(query), item, isFirst);
 
