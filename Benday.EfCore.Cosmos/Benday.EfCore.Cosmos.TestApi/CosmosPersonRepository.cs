@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Benday.EfCore.Cosmos.TestApi
 {
-    public class SqlPersonRepository :
-        SqlEntityFrameworkSearchableRepositoryBase<Person, TestDbContext>
+    public class CosmosPersonRepository :
+        CosmosEntityFrameworkSearchableRepositoryBase<Person, TestDbContext>
     {
-        public SqlPersonRepository(TestDbContext context) : base(context)
+        public CosmosPersonRepository(TestDbContext context) : base(context)
         {
         }
 

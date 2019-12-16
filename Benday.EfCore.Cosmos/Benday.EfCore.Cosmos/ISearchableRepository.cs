@@ -4,7 +4,7 @@ using Benday.Common;
 namespace Benday.EfCore.Cosmos
 {
     public interface ISearchableRepository<T> : IRepository<T> 
-        where T : IInt32Identity
+        where T : IStringIdentity
     {
         SearchResult<T> Search(Search search);
     }

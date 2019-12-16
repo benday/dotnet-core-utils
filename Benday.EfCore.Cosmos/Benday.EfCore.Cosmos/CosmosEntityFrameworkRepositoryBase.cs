@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace Benday.EfCore.Cosmos
 {
-    public abstract class SqlEntityFrameworkRepositoryBase<TEntity, TDbContext> :
-        IDisposable where TEntity : class, IInt32Identity
+    public abstract class CosmosEntityFrameworkRepositoryBase<TEntity, TDbContext> :
+        IDisposable where TEntity : class, IStringIdentity
         where TDbContext : DbContext
     {
-        public SqlEntityFrameworkRepositoryBase(
+        public CosmosEntityFrameworkRepositoryBase(
             TDbContext context)
         {
             if (context == null)
@@ -41,21 +41,14 @@ namespace Benday.EfCore.Cosmos
             }
             else
             {
-                if (item.Id == 0)
-                {
-                    dbset.Add(item);
-                }
-                else
-                {
-                    var entry = _Context.Entry<TEntity>(item);
+                var entry = _Context.Entry<TEntity>(item);
 
-                    if (entry.State == EntityState.Detached)
-                    {
-                        dbset.Attach(item);
-                    }
-
-                    entry.State = EntityState.Modified;
+                if (entry.State == EntityState.Detached)
+                {
+                    dbset.Attach(item);
                 }
+
+                entry.State = EntityState.Modified;
             }
         }
     }

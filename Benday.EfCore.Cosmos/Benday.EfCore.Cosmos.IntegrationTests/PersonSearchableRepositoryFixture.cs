@@ -13,24 +13,22 @@ using Benday.Common;
 namespace Benday.EfCore.Cosmos.IntegrationTests
 {
     [TestClass]
-    public class PersonSearchableRepositoryFixture
+    public class PersonSearchableRepositoryFixture : IntegrationTestBase
     {
-        private readonly string _ConnectionString = "Server=localhost; Database=benday-efcore-sqlserver; User Id=sa; Password=Pa$$word;";
-
         [TestInitialize]
         public void OnTestInitialize()
         {
             _SystemUnderTest = null;
         }
 
-        private SqlPersonRepository _SystemUnderTest;
-        public SqlPersonRepository SystemUnderTest
+        private CosmosPersonRepository _SystemUnderTest;
+        public CosmosPersonRepository SystemUnderTest
         {
             get
             {
                 if (_SystemUnderTest == null)
                 {
-                    _SystemUnderTest = new SqlPersonRepository(GetDbContext());
+                    _SystemUnderTest = new CosmosPersonRepository(GetDbContext());
                 }
 
                 return _SystemUnderTest;
@@ -558,28 +556,5 @@ namespace Benday.EfCore.Cosmos.IntegrationTests
             context.SaveChanges();
         }
 
-        private ILoggerFactory GetLoggerFactory()
-        {
-            IServiceCollection serviceCollection = new ServiceCollection();
-            serviceCollection.AddLogging(builder =>
-                   builder.AddConsole()
-                          .AddFilter(DbLoggerCategory.Database.Command.Name,
-                                     LogLevel.Information));
-            return serviceCollection.BuildServiceProvider()
-                    .GetService<ILoggerFactory>();
-        }
-
-        private TestDbContext GetDbContext()
-        {
-            var optionsBuilder = new DbContextOptionsBuilder();
-
-            optionsBuilder.UseLoggerFactory(GetLoggerFactory());
-            optionsBuilder.EnableSensitiveDataLogging(true);
-            optionsBuilder.UseSqlServer(_ConnectionString);
-
-            TestDbContext context = new TestDbContext(optionsBuilder.Options);
-
-            return context;
-        }
     }
 }

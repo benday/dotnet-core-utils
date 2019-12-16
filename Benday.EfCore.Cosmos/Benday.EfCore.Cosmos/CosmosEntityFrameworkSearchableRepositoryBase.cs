@@ -7,12 +7,12 @@ using System.Linq.Expressions;
 
 namespace Benday.EfCore.Cosmos
 {
-    public abstract class SqlEntityFrameworkSearchableRepositoryBase<TEntity, TDbContext> :
-        SqlEntityFrameworkCrudRepositoryBase<TEntity, TDbContext>, ISearchableRepository<TEntity>
-        where TEntity : class, IInt32Identity
+    public abstract class CosmosEntityFrameworkSearchableRepositoryBase<TEntity, TDbContext> :
+        CosmosEntityFrameworkCrudRepositoryBase<TEntity, TDbContext>, ISearchableRepository<TEntity>
+        where TEntity : class, IStringIdentity
         where TDbContext : DbContext
     {
-        public SqlEntityFrameworkSearchableRepositoryBase(
+        public CosmosEntityFrameworkSearchableRepositoryBase(
             TDbContext context) : base(context)
         {
 

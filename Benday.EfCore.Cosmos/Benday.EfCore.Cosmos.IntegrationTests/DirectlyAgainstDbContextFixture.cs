@@ -4,18 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using System.Linq.Expressions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Benday.EfCore.Cosmos.IntegrationTests
 {
     [TestClass]
-    public class DirectlyAgainstDbContextFixture
+    public class DirectlyAgainstDbContextFixture : IntegrationTestBase
     {
-        private readonly string _ConnectionString = "Server=localhost; Database=benday-efcore-sqlserver; User Id=sa; Password=Pa$$word;";
-
+        
         [TestMethod]
         public void CreateSampleData()
         {
@@ -476,30 +473,6 @@ namespace Benday.EfCore.Cosmos.IntegrationTests
             existing.ForEach(p => context.Persons.Remove(p));
 
             context.SaveChanges();
-        }
-
-        private ILoggerFactory GetLoggerFactory()
-        {
-            IServiceCollection serviceCollection = new ServiceCollection();
-            serviceCollection.AddLogging(builder =>
-                   builder.AddConsole()
-                          .AddFilter(DbLoggerCategory.Database.Command.Name,
-                                     LogLevel.Information));
-            return serviceCollection.BuildServiceProvider()
-                    .GetService<ILoggerFactory>();
-        }
-
-        private TestDbContext GetDbContext()
-        {
-            var optionsBuilder = new DbContextOptionsBuilder();
-
-            optionsBuilder.UseLoggerFactory(GetLoggerFactory());
-            optionsBuilder.EnableSensitiveDataLogging(true);
-            optionsBuilder.UseSqlServer(_ConnectionString);
-
-            TestDbContext context = new TestDbContext(optionsBuilder.Options);
-
-            return context;
         }
     }
 }

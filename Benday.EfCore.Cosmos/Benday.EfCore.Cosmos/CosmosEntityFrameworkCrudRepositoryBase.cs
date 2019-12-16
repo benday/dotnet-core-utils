@@ -7,12 +7,12 @@ using System.Text;
 
 namespace Benday.EfCore.Cosmos
 {
-    public abstract class SqlEntityFrameworkCrudRepositoryBase<TEntity, TDbContext> :
-        SqlEntityFrameworkRepositoryBase<TEntity, TDbContext>, IRepository<TEntity>
-        where TEntity : class, IInt32Identity
+    public abstract class CosmosEntityFrameworkCrudRepositoryBase<TEntity, TDbContext> :
+        CosmosEntityFrameworkRepositoryBase<TEntity, TDbContext>, IRepository<TEntity>
+        where TEntity : class, IStringIdentity
         where TDbContext : DbContext
     {
-        public SqlEntityFrameworkCrudRepositoryBase(
+        public CosmosEntityFrameworkCrudRepositoryBase(
             TDbContext context) : base(context)
         {
 
@@ -106,7 +106,7 @@ namespace Benday.EfCore.Cosmos
             }
         }
 
-        public virtual TEntity GetById(int id)
+        public virtual TEntity GetById(string id)
         {
             var query = from temp in EntityDbSet
                         where temp.Id == id
@@ -119,7 +119,7 @@ namespace Benday.EfCore.Cosmos
             return query.FirstOrDefault();
         }
 
-        private IQueryable<TEntity> BeforeGetById(IQueryable<TEntity> query, int id)
+        private IQueryable<TEntity> BeforeGetById(IQueryable<TEntity> query, string id)
         {
             return query;
         }

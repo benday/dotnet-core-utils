@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Benday.EfCore.Cosmos.TestApi
 {
-    public class PersonNote : IInt32Identity
+    public class PersonNote : EntityBase
     {
-        [Required]
-        public int Id { get; set; }
-
         [Required]
         public int PersonId { get; set; }
 

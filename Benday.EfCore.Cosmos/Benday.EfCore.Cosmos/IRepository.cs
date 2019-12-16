@@ -4,11 +4,11 @@ using Benday.Common;
 
 namespace Benday.EfCore.Cosmos
 {
-    public interface IRepository<T> where T : IInt32Identity
+    public interface IRepository<T> where T : IStringIdentity
     {
         IList<T> GetAll();
         IList<T> GetAll(int maxNumberOfRows);
-        T GetById(int id);
+        T GetById(string id);
         void Save(T saveThis);
         void Delete(T deleteThis);
     }

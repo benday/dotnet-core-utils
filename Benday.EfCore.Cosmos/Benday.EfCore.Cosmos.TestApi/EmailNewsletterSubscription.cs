@@ -2,9 +2,8 @@
 
 namespace Benday.EfCore.Cosmos.TestApi
 {
-    public class EmailNewsletterSubscription : IInt32Identity
+    public class EmailNewsletterSubscription : EntityBase
     {
-        public int Id { get; set; }
         public string EmailAddress { get; set; }
     }
 }
