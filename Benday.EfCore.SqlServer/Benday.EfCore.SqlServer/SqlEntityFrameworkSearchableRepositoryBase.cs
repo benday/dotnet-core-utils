@@ -77,13 +77,13 @@ namespace Benday.EfCore.SqlServer
 
         protected virtual IOrderedQueryable<TEntity> AddSort(IOrderedQueryable<TEntity> query, SortBy sort, bool isFirstSort)
         {
-            if (sort.SortDirection == SearchConstants.SortDirectionAscending)
+            if (sort.Direction == SearchConstants.SortDirectionAscending)
             {
-                return AddSortAscending(query, sort.SortByValue, isFirstSort);
+                return AddSortAscending(query, sort.PropertyName, isFirstSort);
             }
             else
             {
-                return AddSortDescending(query, sort.SortByValue, isFirstSort);
+                return AddSortDescending(query, sort.PropertyName, isFirstSort);
             }
         }
 
@@ -108,7 +108,7 @@ namespace Benday.EfCore.SqlServer
             }
             else if (search.Sorts.Count == 1)
             {
-                if (String.IsNullOrWhiteSpace(search.Sorts[0].SortByValue) == false)
+                if (String.IsNullOrWhiteSpace(search.Sorts[0].PropertyName) == false)
                 {
                     var returnValue = AddSort(EnsureIsOrderedQueryable(query), search.Sorts[0], true);
 
@@ -125,7 +125,7 @@ namespace Benday.EfCore.SqlServer
 
                 foreach (var item in search.Sorts)
                 {
-                    if (String.IsNullOrWhiteSpace(item.SortByValue) == false)
+                    if (String.IsNullOrWhiteSpace(item.PropertyName) == false)
                     {
                         query = AddSort(EnsureIsOrderedQueryable(query), item, isFirst);
 
