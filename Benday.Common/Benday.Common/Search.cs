@@ -12,7 +12,13 @@ namespace Benday.Common
             Arguments = new List<SearchArgument>();
             Sorts = new List<SortBy>();
             MaxNumberOfResults = -1;
+            Name = String.Empty;
         }
+
+        /// <summary>
+        /// Name of the search to run.  (Empty string or null string is the default.)
+        /// </summary>
+        public string Name { get; set; }
 
         public List<SearchArgument> Arguments { get; }
 
