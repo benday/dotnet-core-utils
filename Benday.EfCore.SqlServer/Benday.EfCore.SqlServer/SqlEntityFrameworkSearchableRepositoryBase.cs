@@ -1,28 +1,28 @@
-﻿using Benday.Common;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Benday.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace Benday.EfCore.SqlServer
 {
     public abstract class SqlEntityFrameworkSearchableRepositoryBase<TEntity, TDbContext> :
         SqlEntityFrameworkCrudRepositoryBase<TEntity, TDbContext>, ISearchableRepository<TEntity>
-        where TEntity : class, IInt32Identity
+        where TEntity : class, IEntityBase
         where TDbContext : DbContext
     {
         public SqlEntityFrameworkSearchableRepositoryBase(
             TDbContext context) : base(context)
         {
-
         }
 
         public virtual SearchResult<TEntity> Search(Search search)
         {
-            var returnValue = new SearchResult<TEntity>();
-            
-            returnValue.SearchRequest = search;
+            var returnValue = new SearchResult<TEntity>
+            {
+                SearchRequest = search
+            };
 
             if (search == null)
             {
@@ -30,11 +30,9 @@ namespace Benday.EfCore.SqlServer
             }
             else
             {
-                Expression<Func<TEntity, bool>> whereClausePredicate = null;
-                whereClausePredicate = GetWhereClause(search);
+                var whereClausePredicate = GetWhereClause(search);
 
-                IQueryable<TEntity> query = null;
-
+                IQueryable<TEntity> query;
                 if (whereClausePredicate == null)
                 {
                     query = EntityDbSet.AsQueryable();
@@ -108,7 +106,7 @@ namespace Benday.EfCore.SqlServer
             }
             else if (search.Sorts.Count == 1)
             {
-                if (String.IsNullOrWhiteSpace(search.Sorts[0].PropertyName) == false)
+                if (string.IsNullOrWhiteSpace(search.Sorts[0].PropertyName) == false)
                 {
                     var returnValue = AddSort(EnsureIsOrderedQueryable(query), search.Sorts[0], true);
 
@@ -121,11 +119,11 @@ namespace Benday.EfCore.SqlServer
             }
             else
             {
-                bool isFirst = true;
+                var isFirst = true;
 
                 foreach (var item in search.Sorts)
                 {
-                    if (String.IsNullOrWhiteSpace(item.PropertyName) == false)
+                    if (string.IsNullOrWhiteSpace(item.PropertyName) == false)
                     {
                         query = AddSort(EnsureIsOrderedQueryable(query), item, isFirst);
 
@@ -171,7 +169,7 @@ namespace Benday.EfCore.SqlServer
 
                 if (predicate == null)
                 {
-                    // if predicate is null, the implementer chose to ignore this 
+                    // if predicate is null, the implementer chose to ignore this
                     // search argument and returned null as an indication to skip
                     continue;
                 }
@@ -190,7 +188,7 @@ namespace Benday.EfCore.SqlServer
                 else
                 {
                     throw new InvalidOperationException(
-                        String.Format("Search operator '{0}' is not supported.", arg.Operator));
+                        string.Format("Search operator '{0}' is not supported.", arg.Operator));
                 }
             }
 
@@ -213,6 +211,6 @@ namespace Benday.EfCore.SqlServer
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForStartsWith(
             SearchArgument arg);
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForContains(
-            SearchArgument arg);      
+            SearchArgument arg);
     }
 }

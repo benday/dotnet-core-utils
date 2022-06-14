@@ -12,14 +12,14 @@ namespace Benday.EfCore.SqlServer.TestApi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     FirstName = table.Column<string>(nullable: false),
                     LastName = table.Column<string>(nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Person", x => x.Id);
-                });
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_Person", x => x.Id);
+            });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

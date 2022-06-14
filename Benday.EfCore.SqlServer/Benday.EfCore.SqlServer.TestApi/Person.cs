@@ -1,12 +1,11 @@
-﻿using Benday.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Benday.EfCore.SqlServer.TestApi
 {
     [Table("Person")]
-    public class Person : IInt32Identity
+    public class Person : IEntityBase
     {
         public Person()
         {
@@ -23,5 +22,16 @@ namespace Benday.EfCore.SqlServer.TestApi
         public string LastName { get; set; }
 
         public List<PersonNote> Notes { get; set; }
+
+        [NotMapped]
+        public bool IsMarkedForDelete
+        {
+            get; set;
+        }
+
+        public IList<IDependentEntityCollection> GetDependentEntities()
+        {
+            return null;
+        }
     }
 }

@@ -1,22 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.IO;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace Benday.EfCore.SqlServer.TestApi
 {
-
     public class TestDesignTimeDbContextFactory :
-      IDesignTimeDbContextFactory<TestDbContext>
+        IDesignTimeDbContextFactory<TestDbContext>
     {
-        public TestDbContext Create()
+        public static TestDbContext Create()
         {
-            var environmentName =
-       Environment.GetEnvironmentVariable(
-        "ASPNETCORE_ENVIRONMENT");
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             var basePath = AppContext.BaseDirectory;
 
@@ -30,19 +25,20 @@ namespace Benday.EfCore.SqlServer.TestApi
                 Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
         }
 
-        private TestDbContext Create(string basePath, string environmentName)
+        private static TestDbContext Create(string basePath, string environmentName)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{environmentName}.json", true)
+                .AddJsonFile($"appsettings.unversioned.json", true)
                 .AddEnvironmentVariables();
 
             var config = builder.Build();
 
             var connstr = config.GetConnectionString("default");
 
-            if (String.IsNullOrWhiteSpace(connstr) == true)
+            if (string.IsNullOrWhiteSpace(connstr) == true)
             {
                 throw new InvalidOperationException(
                     "Could not find a connection string named 'default'.");
@@ -53,19 +49,19 @@ namespace Benday.EfCore.SqlServer.TestApi
             }
         }
 
-        private TestDbContext Create(string connectionString)
+        private static TestDbContext Create(string connectionString)
         {
             if (string.IsNullOrEmpty(connectionString))
                 throw new ArgumentException(
-                   $"{nameof(connectionString)} is null or empty.",
-                   nameof(connectionString));
+                $"{nameof(connectionString)} is null or empty.",
+                nameof(connectionString));
 
             var optionsBuilder =
-              new DbContextOptionsBuilder<TestDbContext>();
+                new DbContextOptionsBuilder<TestDbContext>();
 
             Console.WriteLine(
-             "TestDesignTimeDbContextFactory.Create(string): Connection string: {0}",
-             connectionString);
+                "TestDesignTimeDbContextFactory.Create(string): Connection string: {0}",
+                connectionString);
 
             optionsBuilder.UseSqlServer(connectionString);
 

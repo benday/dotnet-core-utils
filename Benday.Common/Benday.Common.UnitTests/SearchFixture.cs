@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Benday.Common.UnitTests
@@ -9,20 +9,20 @@ namespace Benday.Common.UnitTests
         [TestInitialize]
         public void OnTestInitialize()
         {
-            _SystemUnderTest = null;
+            _systemUnderTest = null;
         }
 
-        private Search _SystemUnderTest;
+        private Search _systemUnderTest;
         public Search SystemUnderTest
         {
             get
             {
-                if (_SystemUnderTest == null)
+                if (_systemUnderTest == null)
                 {
-                    _SystemUnderTest = new Search();
+                    _systemUnderTest = new Search();
                 }
 
-                return _SystemUnderTest;
+                return _systemUnderTest;
             }
         }
 
@@ -49,7 +49,7 @@ namespace Benday.Common.UnitTests
             SystemUnderTest.AddSort(expectedSortByValue);
 
             // assert
-            Assert.AreEqual<int>(1, SystemUnderTest.Sorts.Count, 
+            Assert.AreEqual<int>(1, SystemUnderTest.Sorts.Count,
                 "Item count was wrong.");
 
             var actual = SystemUnderTest.Sorts[0];
@@ -102,7 +102,7 @@ namespace Benday.Common.UnitTests
             AssertSort(actual, expectedSortByValue2, expectedSortDirection);
         }
 
-        private void AssertSort(SortBy actual, string expectedSortByValue, string expectedSortDirection)
+        private static void AssertSort(SortBy actual, string expectedSortByValue, string expectedSortDirection)
         {
             Assert.IsNotNull(actual, "sortby is null");
 
@@ -195,7 +195,7 @@ namespace Benday.Common.UnitTests
         {
             // arrange
             var expectedSortByValue = "asdf";
-            string expectedSortDirection = String.Empty;
+            var expectedSortDirection = string.Empty;
 
             // act
             SystemUnderTest.AddSort(expectedSortByValue, expectedSortDirection);
