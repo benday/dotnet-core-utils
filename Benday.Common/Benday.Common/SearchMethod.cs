@@ -2,6 +2,7 @@
 {
     public enum SearchMethod
     {
+        Skip,
         Contains,
         DoesNotContain,
         StartsWith,
