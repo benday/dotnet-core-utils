@@ -14,21 +14,16 @@ namespace Benday.EfCore.SqlServer.TestApi
         {
         }
 
-        protected override DbSet<Person> EntityDbSet
-        {
-            get
-            {
-                return Context.Persons;
-            }
-        }
+        protected override DbSet<Person> EntityDbSet => Context.Persons;
 
         protected override List<string> Includes
         {
             get
             {
-                var includes = new List<string>();
-
-                includes.Add(nameof(Person.Notes));
+                var includes = new List<string>
+                {
+                    nameof(Person.Notes)
+                };
 
                 return includes;
             }
@@ -59,7 +54,7 @@ namespace Benday.EfCore.SqlServer.TestApi
                 else
                 {
                     throw new InvalidOperationException(
-                        String.Format("Unknown argument '{0}'.", arg.PropertyName));
+                        string.Format("Unknown argument '{0}'.", arg.PropertyName));
                 }
 
                 return returnValue;
@@ -91,7 +86,7 @@ namespace Benday.EfCore.SqlServer.TestApi
                 else
                 {
                     throw new InvalidOperationException(
-                        String.Format("Unknown argument '{0}'.", arg.PropertyName));
+                        string.Format("Unknown argument '{0}'.", arg.PropertyName));
                 }
 
                 return returnValue;
@@ -124,7 +119,7 @@ namespace Benday.EfCore.SqlServer.TestApi
                 else
                 {
                     throw new InvalidOperationException(
-                        String.Format("Unknown argument '{0}'.", arg.PropertyName));
+                        string.Format("Unknown argument '{0}'.", arg.PropertyName));
                 }
 
                 return returnValue;
@@ -156,7 +151,7 @@ namespace Benday.EfCore.SqlServer.TestApi
                 else
                 {
                     throw new InvalidOperationException(
-                        String.Format("Unknown argument '{0}'.", arg.PropertyName));
+                        string.Format("Unknown argument '{0}'.", arg.PropertyName));
                 }
 
                 return returnValue;
@@ -188,7 +183,7 @@ namespace Benday.EfCore.SqlServer.TestApi
                 else
                 {
                     throw new InvalidOperationException(
-                        String.Format("Unknown argument '{0}'.", arg.PropertyName));
+                        string.Format("Unknown argument '{0}'.", arg.PropertyName));
                 }
 
                 return returnValue;
@@ -221,7 +216,7 @@ namespace Benday.EfCore.SqlServer.TestApi
                 else
                 {
                     throw new InvalidOperationException(
-                        String.Format("Unknown argument '{0}'.", arg.PropertyName));
+                        string.Format("Unknown argument '{0}'.", arg.PropertyName));
                 }
 
                 return returnValue;
@@ -239,7 +234,7 @@ namespace Benday.EfCore.SqlServer.TestApi
                 else
                 {
                     return query.ThenByDescending(x => x.FirstName);
-                }                                
+                }
             }
             else if (propertyName == "LastName")
             {

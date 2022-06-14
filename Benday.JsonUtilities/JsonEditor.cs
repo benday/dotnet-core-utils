@@ -1,28 +1,27 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Benday.JsonUtilities
 {
     public class JsonEditor
     {
-        private JObject _Json;
-        private string _PathToFile;
+        private readonly JObject _json;
+        private readonly string _pathToFile;
 
         public JsonEditor(string pathToFile)
         {
             if (string.IsNullOrEmpty(pathToFile))
                 throw new ArgumentException($"{nameof(pathToFile)} is null or empty.", nameof(pathToFile));
 
-            _PathToFile = pathToFile;
+            _pathToFile = pathToFile;
 
-            AssertFileExists(_PathToFile);
+            AssertFileExists(_pathToFile);
 
-            _Json = LoadJsonFromFile(_PathToFile);
+            _json = LoadJsonFromFile(_pathToFile);
         }
 
         public JsonEditor(string json, bool loadFromString)
@@ -35,9 +34,9 @@ namespace Benday.JsonUtilities
             if (string.IsNullOrEmpty(json))
                 throw new ArgumentException($"{nameof(json)} is null or empty.", nameof(json));
 
-            _PathToFile = null;
+            _pathToFile = null;
 
-            _Json = JObject.Parse(json);
+            _json = JObject.Parse(json);
         }
 
         public JsonEditor(JObject fromObject)
@@ -47,14 +46,14 @@ namespace Benday.JsonUtilities
                 throw new ArgumentException($"{nameof(fromObject)} is null or empty.", nameof(fromObject));
             }
 
-            _Json = fromObject;
+            _json = fromObject;
         }
 
         public string GetValue(params string[] nodes)
         {
             if (nodes == null || nodes.Length == 0)
                 throw new ArgumentException(
-                    $"{nameof(nodes)} is null or empty.", nameof(nodes));
+                $"{nameof(nodes)} is null or empty.", nameof(nodes));
             var query = GetJsonQueryForNodes(nodes);
 
             return GetValueUsingQuery(query.ToString());
@@ -62,7 +61,7 @@ namespace Benday.JsonUtilities
 
         private string GetJsonQueryForNodes(params string[] nodes)
         {
-            bool needsPeriod = false;
+            var needsPeriod = false;
 
             var query = new StringBuilder();
 
@@ -88,9 +87,9 @@ namespace Benday.JsonUtilities
 
             JObject parent = null;
 
-            for (int i = 0; i < nodes.Length; i++)
+            for (var i = 0; i < nodes.Length; i++)
             {
-                var current = GetJToken(_Json,
+                var current = GetJToken(_json,
                     GetJsonQueryForNodes(nodes.Take(i + 1).ToArray()));
 
                 if (current == null)
@@ -98,12 +97,12 @@ namespace Benday.JsonUtilities
                     if ((nodes.Length - i) > 1)
                     {
                         // node is somewhere in the middle of structure
-                        JObject tempContainer = new JObject();
+                        var tempContainer = new JObject();
                         var temp = new JProperty(nodes[i], tempContainer);
 
                         if (parent == null)
                         {
-                            _Json.Add(temp);
+                            _json.Add(temp);
                         }
                         else
                         {
@@ -115,11 +114,11 @@ namespace Benday.JsonUtilities
                     else
                     {
                         // end of node structure
-                        var temp = new JProperty(nodes[i], String.Empty);
+                        var temp = new JProperty(nodes[i], string.Empty);
 
                         if (parent == null)
                         {
-                            _Json.Add(temp);
+                            _json.Add(temp);
                         }
                         else
                         {
@@ -140,11 +139,11 @@ namespace Benday.JsonUtilities
                 throw new ArgumentException($"{nameof(nodeValue)} is null or empty.", nameof(nodeValue));
             if (nodes == null || nodes.Length == 0)
                 throw new ArgumentException(
-                    $"{nameof(nodes)} is null or empty.", nameof(nodes));
+                $"{nameof(nodes)} is null or empty.", nameof(nodes));
 
             var query = GetJsonQueryForNodes(nodes);
 
-            var match = GetJToken(_Json, query);
+            var match = GetJToken(_json, query);
 
             if (match != null)
             {
@@ -159,35 +158,19 @@ namespace Benday.JsonUtilities
             WriteJsonFile();
         }
 
-        private void SetValueUsingQuery(string query, string value)
-        {
-            var match = GetJToken(_Json, query);
-
-            if (match != null)
-            {
-                match.Replace(new JValue(value));
-            }
-            else
-            {
-                throw new InvalidOperationException("No matching node.");
-            }
-
-            WriteJsonFile();
-        }
-
         private void WriteJsonFile()
         {
-            if (_PathToFile != null)
+            if (_pathToFile != null)
             {
                 File.WriteAllText(
-                    _PathToFile,
-                    JsonConvert.SerializeObject(_Json, Formatting.Indented));
+                    _pathToFile,
+                    JsonConvert.SerializeObject(_json, Formatting.Indented));
             }
         }
 
         public string ToJsonString()
         {
-            return JsonConvert.SerializeObject(_Json, Formatting.Indented);
+            return JsonConvert.SerializeObject(_json, Formatting.Indented);
         }
 
         private JToken GetJToken(JObject json, string query)
@@ -197,17 +180,10 @@ namespace Benday.JsonUtilities
             return match;
         }
 
-        private List<JToken> GetJTokens(JObject json, string query)
-        {
-            var match = json.SelectTokens(query).ToList();
-
-            return match;
-        }
-
         private string GetValueUsingQuery(string query)
         {
-            JToken match = GetJToken(
-                _Json, query);
+            var match = GetJToken(
+                _json, query);
 
             if (match == null)
             {
@@ -279,11 +255,11 @@ namespace Benday.JsonUtilities
         {
             if (nodes == null || nodes.Length == 0)
                 throw new ArgumentException(
-                    $"{nameof(nodes)} is null or empty.", nameof(nodes));
+                $"{nameof(nodes)} is null or empty.", nameof(nodes));
 
             var query = GetJsonQueryForNodes(nodes);
 
-            return GetJToken(_Json, query);
+            return GetJToken(_json, query);
         }
 
         public JToken GetNodeByQuery(string query)
@@ -293,13 +269,13 @@ namespace Benday.JsonUtilities
                 throw new ArgumentException($"{nameof(query)} is null or empty.", nameof(query));
             }
 
-            return GetJToken(_Json, query);
+            return GetJToken(_json, query);
         }
 
         private JToken FindParentNodeBySiblingValue(SiblingValueArguments args)
         {
             var collectionMatch = GetJToken(
-               _Json, GetJsonQueryForNodes(args.PathArguments));
+                _json, GetJsonQueryForNodes(args.PathArguments));
 
             if (collectionMatch == null)
             {
@@ -329,6 +305,5 @@ namespace Benday.JsonUtilities
                 return null;
             }
         }
-
     }
 }

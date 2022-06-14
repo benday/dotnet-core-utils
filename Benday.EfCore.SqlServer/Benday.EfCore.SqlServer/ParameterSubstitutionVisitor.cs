@@ -5,8 +5,16 @@ namespace Benday.EfCore.SqlServer
 {
     public class ParameterSubstitutionVisitor : ExpressionVisitor
     {
-        public Dictionary<Expression, Expression> Substitutions = 
-            new Dictionary<Expression, Expression>();
+        public ParameterSubstitutionVisitor()
+        {
+            Substitutions = new Dictionary<Expression, Expression>();
+        }
+
+        public Dictionary<Expression, Expression> Substitutions
+        {
+            get;
+            private set;
+        }
 
         protected override Expression VisitParameter(ParameterExpression expr)
         {

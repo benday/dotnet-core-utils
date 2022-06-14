@@ -1,11 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Benday.JsonUtilities
 {
@@ -80,7 +76,7 @@ namespace Benday.JsonUtilities
             if (string.IsNullOrEmpty(value))
                 throw new ArgumentException($"{nameof(value)} is null or empty.", nameof(value));
 
-            string query = String.Format("{0}.{1}", node1, node2);
+            var query = string.Format("{0}.{1}", node1, node2);
 
             SetValueUsingQuery(pathToFile, query, value);
         }
@@ -100,7 +96,7 @@ namespace Benday.JsonUtilities
             if (string.IsNullOrEmpty(value))
                 throw new ArgumentException($"{nameof(value)} is null or empty.", nameof(value));
 
-            string query = String.Format("{0}.{1}.{2}",
+            var query = string.Format("{0}.{1}.{2}",
                 node1, node2, node3);
 
             SetValueUsingQuery(pathToFile, query, value);
@@ -121,7 +117,7 @@ namespace Benday.JsonUtilities
 
             var json = LoadJsonFile(pathToFile);
 
-            var match = GetJToken(json, pathToFile, query);
+            var match = GetJToken(json, query);
 
             if (match != null)
             {
@@ -140,9 +136,9 @@ namespace Benday.JsonUtilities
         {
             var tempJObject = LoadJsonFile(pathToFile);
 
-            JToken match = GetJToken(
+            var match = GetJToken(
                 tempJObject,
-                pathToFile, query);
+                query);
 
             if (match == null)
             {
@@ -154,7 +150,7 @@ namespace Benday.JsonUtilities
             }
         }
 
-        public static JToken GetJToken(JObject json, string pathToFile, string query)
+        public static JToken GetJToken(JObject json, string query)
         {
             var match = json.SelectToken(query);
 
@@ -185,7 +181,5 @@ namespace Benday.JsonUtilities
             dynamic parsedJson = JsonConvert.DeserializeObject(input);
             return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
         }
-
-
     }
 }

@@ -24,7 +24,7 @@ namespace Benday.EfCore.SqlServer
             Expression<Func<T, bool>> right,
             ExpressionType expressionType)
         {
-            ParameterExpression leftParameter0 = left.Parameters[0];
+            var leftParameter0 = left.Parameters[0];
 
             var visitor = new ParameterSubstitutionVisitor();
 

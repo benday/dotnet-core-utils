@@ -1,37 +1,41 @@
-﻿using Benday.Common;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 
 namespace Benday.EfCore.SqlServer
 {
     public abstract class SqlEntityFrameworkRepositoryBase<TEntity, TDbContext> :
-        IDisposable where TEntity : class, IInt32Identity
+        IDisposable where TEntity : class, IEntityBase
         where TDbContext : DbContext
     {
-        public SqlEntityFrameworkRepositoryBase(
+        protected SqlEntityFrameworkRepositoryBase(
             TDbContext context)
         {
-            if (context == null)
-                throw new ArgumentNullException("context", "context is null.");
-
-            _Context = context;
+            _context = context ?? throw new ArgumentNullException("context", "context is null.");
         }
 
         public void Dispose()
         {
-            ((IDisposable)_Context).Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        private TDbContext _Context;
-
-        protected TDbContext Context
+        private bool _isDisposed = false;
+        protected virtual void Dispose(bool disposing)
         {
-            get
+            if (_isDisposed) return;
+
+            if (disposing)
             {
-                return _Context;
+                // free managed resources
+                ((IDisposable)_context).Dispose();
             }
+
+            _isDisposed = true;
         }
+
+        private readonly TDbContext _context;
+
+        protected TDbContext Context => _context;
 
         protected void VerifyItemIsAddedOrAttachedToDbSet(DbSet<TEntity> dbset, TEntity item)
         {
@@ -47,7 +51,7 @@ namespace Benday.EfCore.SqlServer
                 }
                 else
                 {
-                    var entry = _Context.Entry<TEntity>(item);
+                    var entry = _context.Entry<TEntity>(item);
 
                     if (entry.State == EntityState.Detached)
                     {
